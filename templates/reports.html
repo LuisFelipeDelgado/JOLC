@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Reports Page{% endblock %}
+
+{% block content %}
+<main role="main" class="container p-4">
+    <div class="row">
+    <form action="/reports/arbol" method="GET">
+        <button type="arbol" class="btn btn-primary"style="margin-right: 5%;">Arbol</button>
+        <div class="mb-3" style="margin-right: 5%;">
+            <img src="data:image/svg+xml;base64,{{chart}}" style="margin: auto;">
+        </div>
+    </form>
+    <form action="/reports/simbols" method="GET">
+        <button type="simbols" class="btn btn-primary"style="margin-right: 5%;">Simbolos</button>
+        <div class="mb-3" style="margin-right: 5%;">
+            <img src="data:image/svg+xml;base64,{{chart2}}" style="margin: auto;">
+        </div>
+    </form>
+    <form action="/reports/errors" method="GET">
+        <button type="errors" class="btn btn-primary"style="margin-right: 5%;">Errores</button>
+        <div class="mb-3" style="margin-right: 5%;">
+            <img src="data:image/svg+xml;base64,{{chart3}}" style="margin: auto;">
+        </div>
+    </form>
+    </div>
+</main>
+{% endblock %}

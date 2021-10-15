@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Analyze Page{% endblock %}
+
+{% block content %}
+<main role="main">
+    <div class="row">
+        <div style="width: 42%;margin-right: 4%;margin-left: 5%;">
+            <form action="#" method="POST">
+            <div class="mb-3">
+                <label for="default" class="form-label">Input:</label>
+                <textarea class="codemirror-textarea form-control" name="inpt" id="default" cols="30" rows="10">{{initial}}</textarea>
+                <div class="form-text">Test ply</div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+        </div>
+        <div style="width: 42%; height: 100%;">
+        <form action="#" method="GET">
+            <div class="mb-3">
+                <label for="default" class="form-label">Output:</label>
+                <textarea class="form-control" readonly name="inpt" id="default" cols="30" rows="12" style="font-family: monospace; background-color: #545b66; color: #EEFFFF">{{input}}</textarea>
+            </div>
+        </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
