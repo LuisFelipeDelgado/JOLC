@@ -1,3 +1,4 @@
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
@@ -13,11 +14,16 @@ class Asignacion(Expresion):
         self.tipo = tipo
 
     def interpretar(self, tree, table):
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
+
         if isinstance(self.tipo, Excepcion):
             return self.tipo
-        value = None
+        value = self.expresion.interpretar(tree, table)
+        isHeap = False
+        if (value.tipo == TIPOS.CADENA) | (value.tipo==TIPOS.STRUCT):
+            isHeap=True
         if(self.tipo==None):
-            value = self.expresion.interpretar(tree, table)
             if isinstance(value, Excepcion):
                 return value
         else:
@@ -26,13 +32,27 @@ class Asignacion(Expresion):
                 return value
             if(value.tipo!=self.tipo.tipos):
                 return Excepcion("Semantico", "Tipo erroneo para declaracion",self.fila,self.columna)
-        simbolo = Simbolo(self.tipo, self.identificador, self.fila, self.columna, value)
+        simbolo = Simbolo(value.tipo, self.identificador, self.fila, self.columna, None,table.tamano,table.anterior==None,isHeap)
 
         result = table.actualizarTabla(simbolo)     # Si no se encuentra el simbolo, lo agrega 
+        tempP = result.posicion
+        if not result.globalV:
+            tempP = codigoR.addTemp()
+            codigoR.addExp(tempP,'P',result.posicion,'+')
+        if(value.tipo == TIPOS.BOOLEANO):
+            tempE = codigoR.newE()
+            
+            codigoR.putE(value.ev)
+            codigoR.setStack(tempP, "1")
+            
+            codigoR.GoTo(tempE)
 
-        if isinstance(result,Excepcion): return result
-    
-        return None
+            codigoR.putE(value.ef)
+            codigoR.setStack(tempP, "0")
+
+            codigoR.putE(tempE)
+        else:
+            codigoR.setStack(tempP, value.valor)
 
     def getNodo(self):
         nodo = NodoAST("ASIGNACION")

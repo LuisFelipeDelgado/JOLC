@@ -436,7 +436,7 @@ CodeMirror.defineMode("perl",function(){
                 'split'                         :1,     // - split up a string using a regexp delimiter
                 sprintf                         :1,     // - formatted print into a string
                 'sqrt'                          :1,     // - square root function
-                srand                           :1,     // - seed the random number generator
+                srand                           :1,     // - seed the random number codigoR
                 stat                            :1,     // - get a file's status information
                 state                           :1,     // - declare and assign a state variable (persistent lexical scoping)
                 study                           :1,     // - optimize input data for repeated searches

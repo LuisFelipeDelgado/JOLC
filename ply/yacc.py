@@ -2031,7 +2031,7 @@ class LRTable(object):
 
 
 # -----------------------------------------------------------------------------
-#                           === LR Generator ===
+#                           === LR TCI ===
 #
 # The following classes and functions are used to generate LR parsing tables on
 # a grammar.
@@ -2120,7 +2120,7 @@ class LRGeneratedTable(LRTable):
 
         self._add_count    = 0         # Internal counter used to detect cycles
 
-        # Diagonistic information filled in by the table generator
+        # Diagonistic information filled in by the table codigoR
         self.sr_conflict   = 0
         self.rr_conflict   = 0
         self.conflicts     = []        # List of conflicts

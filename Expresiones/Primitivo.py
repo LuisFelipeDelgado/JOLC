@@ -2,7 +2,7 @@ from Abstract.NodoAST import NodoAST
 from Abstract.instruccion import Expresion
 from Abstract.ReturnA import Return
 from abc import ABC, abstractmethod
-from TS.GCI import Generator
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
 
@@ -12,24 +12,24 @@ class Primitivo(Expresion):
         self.valor=valor
 
     def interpretar(self, tree, table):
-        genAux = Generator()
-        generator = genAux.getInstance()
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
         if(self.tipo==TIPOS.ENTERO or self.tipo==TIPOS.DECIMAL):
             return Return(str(self.valor),self.tipo,False)
         elif self.tipo == TIPOS.BOOLEANO:
             if self.ev == '':
-                self.ev = generator.newE()
+                self.ev = codigoR.newE()
             if self.ef == '':
-                self.ef = generator.newE()
+                self.ef = codigoR.newE()
             
             if(self.valor):
-                generator.addGoto(self.ev)
-                generator.addComment("GOTO PARA EVITAR ERROR DE GO")
-                generator.addGoto(self.ef)
+                codigoR.GoTo(self.ev)
+                codigoR.addComment("GOTO PARA EVITAR ERROR DE GO")
+                codigoR.GoTo(self.ef)
             else:
-                generator.addGoto(self.ef)
-                generator.addComment("GOTO PARA EVITAR ERROR DE GO")
-                generator.addGoto(self.ev)
+                codigoR.GoTo(self.ef)
+                codigoR.addComment("GOTO PARA EVITAR ERROR DE GO")
+                codigoR.GoTo(self.ev)
             
             ret = Return(self.valor, self.tipo, False)
             ret.ev = self.ev
@@ -37,15 +37,15 @@ class Primitivo(Expresion):
 
             return ret
         elif self.tipo == TIPOS.CADENA:
-            retTemp = generator.addTemp()
-            generator.addExp(retTemp, 'H', '', '')
+            retTemp = codigoR.addTemp()
+            codigoR.addExp(retTemp, 'H', '', '')
 
             for char in str(self.valor):
-                generator.setHeap('H', ord(char))   # heap[H] = NUM;
-                generator.nextHeap()                # H = H + 1;
+                codigoR.setHeap('H', ord(char))   # heap[H] = NUM;
+                codigoR.nextHeap()                # H = H + 1;
 
-            generator.setHeap('H', '-1')            # FIN DE CADENA
-            generator.nextHeap()
+            codigoR.setHeap('H', '-1')            # FIN DE CADENA
+            codigoR.nextHeap()
 
             return Return(retTemp, TIPOS.CADENA, True)
 

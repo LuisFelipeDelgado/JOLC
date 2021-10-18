@@ -1,7 +1,7 @@
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
-from TS.GCI import Generator
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
 class Imprimir(Expresion):
@@ -13,39 +13,39 @@ class Imprimir(Expresion):
 
     def interpretar(self, tree, table):
         valor1 = None
-        genaux = Generator()
-        generator = genaux.getInstance()
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
         if self.expresion!=None:
             for m in self.expresion:
                 val = m.interpretar(tree,table)
                 if val.tipo == TIPOS.ENTERO:
-                    generator.addPrint("d",val.valor)
+                    codigoR.addPrint("d",val.valor)
                 elif val.tipo == TIPOS.DECIMAL:
-                    generator.addPrint("f",val.valor)
+                    codigoR.addPrint("f",val.valor)
                 elif val.tipo == TIPOS.BOOLEANO:
-                    tempLbl = generator.newE()
-                    generator.putE(val.ev)
-                    generator.printTrue()
-                    generator.addGoto(tempLbl)
+                    tempLbl = codigoR.newE()
+                    codigoR.putE(val.ev)
+                    codigoR.printTrue()
+                    codigoR.GoTo(tempLbl)
                     
-                    generator.putE(val.ef)
-                    generator.printFalse()
-                    generator.putE(tempLbl)
+                    codigoR.putE(val.ef)
+                    codigoR.printFalse()
+                    codigoR.putE(tempLbl)
                 elif val.tipo == TIPOS.CADENA:
-                    generator.fPrintString()
+                    codigoR.fPrintString()
 
-                    paramTemp = generator.addTemp()
+                    paramTemp = codigoR.addTemp()
                     
-                    generator.addExp(paramTemp, 'P', table.tamano, '+')
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, val.valor)
+                    codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, val.valor)
                     
-                    generator.newEnv(table.tamano)
-                    generator.callFun('printString')
+                    codigoR.newEnv(table.tamano)
+                    codigoR.callFun('printString')
 
-                    temp = generator.addTemp()
-                    generator.getStack(temp, 'P')
-                    generator.retEnv(table.tamano)
+                    temp = codigoR.addTemp()
+                    codigoR.getStack(temp, 'P')
+                    codigoR.retEnv(table.tamano)
                 '''valor1 = m.interpretar(tree,table)
                 if isinstance(valor1, Excepcion):
                     return valor1
@@ -79,7 +79,7 @@ class Imprimir(Expresion):
                         val = val[:-1]
                     val += "}"'''
         if self.opcion == 1:
-            generator.addPrint("c", 10)
+            codigoR.addPrint("c", 10)
         
     def getNodo(self):
         nodo1 = NodoAST("IMPRIMIR")

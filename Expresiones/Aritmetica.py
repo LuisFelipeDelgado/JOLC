@@ -4,7 +4,7 @@ from enum import Enum
 from Abstract.NodoAST import NodoAST
 from Abstract.instruccion import Expresion
 from Excepciones.Excepcion import Excepcion
-from TS.GCI import Generator
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
 
@@ -17,8 +17,8 @@ class Aritmetica(Expresion):
         self.columna = columna
 
     def interpretar(self, tree, table):
-        genaux = Generator()
-        generator = genaux.getInstance()
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
         res_left = None
         res_right = None
         res_uni = None
@@ -31,27 +31,27 @@ class Aritmetica(Expresion):
                 return res_right;  
         else:
             res_uni = self.OperacionIzq.interpretar(tree, table)
-        temp = generator.addTemp()
+        temp = codigoR.addTemp()
         op = ''
         if (self.operador==OperadorAritmetico.MAS):
             op = '+'
             if(res_left.tipo==TIPOS.ENTERO):
                 print(res_left.valor)
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.ENTERO, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     tree.excepciones.append()
                     return Excepcion("Semantico", "Tipo erroneo para +",self.fila,self.columna)
             elif (res_left.tipo==TIPOS.DECIMAL):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para +",self.fila,self.columna)
@@ -62,19 +62,19 @@ class Aritmetica(Expresion):
             op = '-'
             if(res_left.tipo==TIPOS.ENTERO):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.ENTERO, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para -",self.fila,self.columna)
             elif (res_left.tipo==TIPOS.DECIMAL):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para -",self.fila,self.columna)
@@ -85,36 +85,36 @@ class Aritmetica(Expresion):
             op = '*'
             if(res_left.tipo==TIPOS.ENTERO):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.ENTERO, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para *4",self.fila,self.columna)
             elif (res_left.tipo==TIPOS.DECIMAL):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para *5",self.fila,self.columna)
             elif (res_left.tipo==TIPOS.CADENA):
                 if(res_right.tipo==TIPOS.CADENA):
-                    generator.fconString()
-                    paramTemp = generator.addTemp()
-                    generator.addExp(paramTemp, 'P', table.tamano, '+')
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_left.valor)
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_right.valor)
-                    generator.newEnv(table.tamano)
-                    generator.callFun('addString')
-                    paramTemp = generator.addTemp()
-                    generator.getStack(paramTemp, 'P')
-                    generator.retEnv(table.tamano)
+                    codigoR.fconString()
+                    paramTemp = codigoR.addTemp()
+                    codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_left.valor)
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_right.valor)
+                    codigoR.newEnv(table.tamano)
+                    codigoR.callFun('addString')
+                    paramTemp = codigoR.addTemp()
+                    codigoR.getStack(paramTemp, 'P')
+                    codigoR.retEnv(table.tamano)
                     return Return(paramTemp, TIPOS.CADENA, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para *1",self.fila,self.columna)
@@ -129,10 +129,10 @@ class Aritmetica(Expresion):
                     res_left.valor = str(res_left.valor)
                     res_right.valor = int(res_right.valor)*1.0
                     res_right.valor = str(res_right.valor)
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addExp(temp, res_left.valor,res_right.valor,op)
+                    codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para /",self.fila,self.columna)
@@ -149,32 +149,32 @@ class Aritmetica(Expresion):
             op='^'
             if(res_left.tipo==TIPOS.ENTERO):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.fPow()
-                    paramTemp = generator.addTemp()
-                    generator.addExp(paramTemp, 'P', table.tamano, '+')
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_left.valor)
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_right.valor)
-                    generator.newEnv(table.tamano)
-                    generator.callFun('Pow')
-                    paramTemp = generator.addTemp()
-                    generator.getStack(paramTemp, 'P')
-                    generator.retEnv(table.tamano)
+                    codigoR.fPow()
+                    paramTemp = codigoR.addTemp()
+                    codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_left.valor)
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_right.valor)
+                    codigoR.newEnv(table.tamano)
+                    codigoR.callFun('Pow')
+                    paramTemp = codigoR.addTemp()
+                    codigoR.getStack(paramTemp, 'P')
+                    codigoR.retEnv(table.tamano)
                     return Return(paramTemp, TIPOS.ENTERO, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.fPow()
-                    paramTemp = generator.addTemp()
-                    generator.addExp(paramTemp, 'P', table.tamano, '+')
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_left.valor)
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_right.valor)
-                    generator.newEnv(table.tamano)
-                    generator.callFun('Pow')
-                    paramTemp = generator.addTemp()
-                    generator.getStack(paramTemp, 'P')
-                    generator.retEnv(table.tamano)
+                    codigoR.fPow()
+                    paramTemp = codigoR.addTemp()
+                    codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_left.valor)
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_right.valor)
+                    codigoR.newEnv(table.tamano)
+                    codigoR.callFun('Pow')
+                    paramTemp = codigoR.addTemp()
+                    codigoR.getStack(paramTemp, 'P')
+                    codigoR.retEnv(table.tamano)
                     return Return(paramTemp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para ^",self.fila,self.columna)
@@ -187,18 +187,18 @@ class Aritmetica(Expresion):
                     return Excepcion("Semantico", "Tipo erroneo para ^",self.fila,self.columna)
             elif (res_left.tipo==TIPOS.CADENA):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.fpowString()
-                    paramTemp = generator.addTemp()
-                    generator.addExp(paramTemp, 'P', table.tamano, '+')
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_left.valor)
-                    generator.addExp(paramTemp, paramTemp, '1', '+')
-                    generator.setStack(paramTemp, res_right.valor)
-                    generator.newEnv(table.tamano)
-                    generator.callFun('powString')
-                    paramTemp = generator.addTemp()
-                    generator.getStack(paramTemp, 'P')
-                    generator.retEnv(table.tamano)
+                    codigoR.fpowString()
+                    paramTemp = codigoR.addTemp()
+                    codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_left.valor)
+                    codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                    codigoR.setStack(paramTemp, res_right.valor)
+                    codigoR.newEnv(table.tamano)
+                    codigoR.callFun('powString')
+                    paramTemp = codigoR.addTemp()
+                    codigoR.getStack(paramTemp, 'P')
+                    codigoR.retEnv(table.tamano)
                     return Return(paramTemp, TIPOS.CADENA, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para ^",self.fila,self.columna)
@@ -209,19 +209,19 @@ class Aritmetica(Expresion):
             op='%'
             if(res_left.tipo==TIPOS.ENTERO):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addMod(temp, res_left.valor,res_right.valor)
+                    codigoR.addMod(temp, res_left.valor,res_right.valor)
                     return Return(temp, TIPOS.ENTERO, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addMod(temp, res_left.valor,res_right.valor)
+                    codigoR.addMod(temp, res_left.valor,res_right.valor)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para %",self.fila,self.columna)
             elif (res_left.tipo==TIPOS.DECIMAL):
                 if(res_right.tipo==TIPOS.ENTERO):
-                    generator.addMod(temp, res_left.valor,res_right.valor)
+                    codigoR.addMod(temp, res_left.valor,res_right.valor)
                     return Return(temp, TIPOS.DECIMAL, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):
-                    generator.addMod(temp, res_left.valor,res_right.valor)
+                    codigoR.addMod(temp, res_left.valor,res_right.valor)
                     return Return(temp, TIPOS.DECIMAL, True)
                 else:
                     return Excepcion("Semantico", "Tipo erroneo para %",self.fila,self.columna)
@@ -231,10 +231,10 @@ class Aritmetica(Expresion):
         elif (self.operador==OperadorAritmetico.UNMENOS):
             op='*'
             if(res_uni.tipo==TIPOS.ENTERO):
-                generator.addExp(temp, res_uni.valor,-1,op)
+                codigoR.addExp(temp, res_uni.valor,-1,op)
                 return Return(temp, TIPOS.ENTERO, True)
             elif(res_uni.tipo==TIPOS.DECIMAL):
-                generator.addExp(temp, res_uni.valor,-1,op)
+                codigoR.addExp(temp, res_uni.valor,-1,op)
                 return Return(temp, TIPOS.DECIMAL, True)
             else:
                 return Excepcion("Semantico", "Tipo erroneo para negativo",self.fila,self.columna)

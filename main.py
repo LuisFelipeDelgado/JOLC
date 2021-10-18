@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, render_template, request
-from TS.GCI import Generator
+from TS.TCI import TCI
 from grammar import parse
 import base64
 import graphviz
@@ -19,12 +19,12 @@ def analyze():
         inpt = request.form["inpt"]
         global tmp_val
         tmp_val=inpt
-        genAux = Generator()
-        genAux.cleanAll()
-        generator = genAux.getInstance()
+        codigoAux = TCI()
+        codigoAux.cleanAll()
+        codigoR = codigoAux.getInstance()
         global result
         result = parse(tmp_val)
-        return render_template('analyze.html',initial=inpt, input=generator.getCode())
+        return render_template('analyze.html',initial=inpt, input=codigoR.getCode())
     else:
         return render_template('analyze.html')
 

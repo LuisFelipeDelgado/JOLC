@@ -198,7 +198,7 @@
       attrs: {
         content: null,
         charset: charsets,
-        name: ["viewport", "application-name", "author", "description", "generator", "keywords"],
+        name: ["viewport", "application-name", "author", "description", "codigoR", "keywords"],
         "http-equiv": ["content-language", "content-type", "default-style", "refresh"]
       }
     },

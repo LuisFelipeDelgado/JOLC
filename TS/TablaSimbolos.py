@@ -8,8 +8,14 @@ class TablaSimbolos:
         self.tipo = None
         self.entorno = ""
         self.tamano = 0
+        self.breakE = ''
+        self.continueE = ''
+        self.returnE = ''
         if anterior!=None:
             self.tamano = self.anterior.tamano
+            self.breakE = self.anterior.breakE
+            self.continueE = self.anterior.continueE
+            self.returnE = self.anterior.returnE
 
     def setVariable(self, simbolo):      # Agregar una variable
         if simbolo in self.tabla :
@@ -32,12 +38,12 @@ class TablaSimbolos:
         while tablaActual != None:
             if simbolo.id in tablaActual.tabla :
                 tablaActual.tabla[simbolo.id].setValor(simbolo.getValor())
-                return None             # simbolo actualizado
+                return tablaActual.tabla[simbolo.id]
             else:
                 tablaActual = tablaActual.anterior
-        
+        self.tamano+=1
         self.tabla[simbolo.id] = simbolo
-        return None # --> simbolo agregado
+        return self.tabla[simbolo.id]
         
     def getTable(self):
         return self.tabla

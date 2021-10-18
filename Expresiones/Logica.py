@@ -4,7 +4,7 @@ from Expresiones.Primitivo import Primitivo
 from Abstract.NodoAST import NodoAST
 from Abstract.instruccion import Expresion
 from Excepciones.Excepcion import Excepcion
-from TS.GCI import Generator
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
 class Logica(Expresion):
@@ -18,18 +18,18 @@ class Logica(Expresion):
         res_left = None
         res_right = None
         res_uni = None
-        genAux = Generator()
-        generator = genAux.getInstance()
-        generator.addComment("INICIO EXPRESION LOGICA")
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
+        codigoR.addComment("INICIO EXPRESION LOGICA")
         self.checkLabels()
         lblAndOr = ''
         if (self.operador==OperadorLogico.OR):
             self.OperacionIzq.ev = self.OperacionDer.ev = self.ev
-            lblAndOr = self.OperacionIzq.ef = generator.newE()
+            lblAndOr = self.OperacionIzq.ef = codigoR.newE()
             self.OperacionDer.ef = self.ef
                     
         elif (self.operador==OperadorLogico.AND):
-            lblAndOr = self.OperacionIzq.ev = generator.newE()
+            lblAndOr = self.OperacionIzq.ev = codigoR.newE()
             self.OperacionDer.ev = self.ev
             self.OperacionIzq.ef = self.OperacionDer.ef = self.ef
         
@@ -37,8 +37,8 @@ class Logica(Expresion):
             lblAndOr = self.OperacionIzq.ef = self.ev
             self.OperacionIzq.ev = self.ef
             res_uni = self.OperacionIzq.interpretar(tree, table)
-            generator.addComment("FINALIZO EXPRESION LOGICA")
-            generator.addSpace()
+            codigoR.addComment("FINALIZO EXPRESION LOGICA")
+            codigoR.addSpace()
             ret = Return(None, TIPOS.BOOLEANO, False)
             ret.ev = self.ev
             ret.ef = self.ef
@@ -47,13 +47,13 @@ class Logica(Expresion):
         if res_left.tipo != TIPOS.BOOLEANO:
             print("No se puede utilizar en expresion booleana")
             return
-        generator.putE(lblAndOr)
+        codigoR.putE(lblAndOr)
         res_right = self.OperacionDer.interpretar(tree,table)
         if res_right.tipo != TIPOS.BOOLEANO:
             print("No se puede utilizar en expresion booleana")
             return
-        generator.addComment("FINALIZO EXPRESION LOGICA")
-        generator.addSpace()
+        codigoR.addComment("FINALIZO EXPRESION LOGICA")
+        codigoR.addSpace()
         ret = Return(None, TIPOS.BOOLEANO, False)
         ret.ev = self.ev
         ret.ef = self.ef
@@ -82,12 +82,12 @@ class Logica(Expresion):
         return ret
 
     def checkLabels(self):
-        genAux = Generator()
-        generator = genAux.getInstance()
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
         if self.ev == '':
-            self.ev = generator.newE()
+            self.ev = codigoR.newE()
         if self.ef == '':
-            self.ef = generator.newE()
+            self.ef = codigoR.newE()
             
 class OperadorLogico(Enum):
     NOT = 1

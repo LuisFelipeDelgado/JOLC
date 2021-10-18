@@ -2,6 +2,7 @@ from Abstract.instruccion import Expresion
 from Instrucciones.Return import Return
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
@@ -15,25 +16,19 @@ class While(Expresion):
         self.columna = columna
 
     def interpretar(self, tree, table):
-        while True:
-            condicion = self.condicion.interpretar(tree, table)
-            if isinstance(condicion, Excepcion): return condicion
-
-            if condicion.tipo == TIPOS.BOOLEANO:
-                if bool(condicion.valor) == True:   # VERIFICA SI ES VERDADERA LA CONDICION
-                    nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
-                    for instruccion in self.instrucciones:
-                        result = instruccion.interpretar(tree, nuevaTabla) #EJECUTA INSTRUCCION ADENTRO DEL IF
-                        if isinstance(result, Excepcion) :
-                            tree.getExcepciones().append(result)
-                            tree.updateConsola(result.toString())
-                        if isinstance(result, Break): return None
-                        if isinstance(result, Continue): break;
-                        if isinstance(result, Return): return result
-                else:
-                    break
-            else:
-                return Excepcion("Semantico", "Tipo de expresion erronea en condición de while.", self.fila, self.columna)
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
+        continueE = codigoR.newE()
+        codigoR.putE(continueE)
+        condicion = self.condicion.interpretar(tree, table)
+        nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
+        nuevaTabla.breakE = condicion.ef
+        nuevaTabla.continueE = continueE
+        codigoR.putE(condicion.ev)
+        for instr in  self.instrucciones:
+            instr.interpretar(tree, nuevaTabla)
+        codigoR.GoTo(continueE)
+        codigoR.putE(condicion.ef)
 
     def getNodo(self):
         nodo1 = NodoAST("WHILE")

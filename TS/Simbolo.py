@@ -6,8 +6,8 @@ class Simbolo:
         self.columna = columna
         self.tipo = tipo
         self.valor = valor
-        self.pos = posicion
-        self.isGlobal = globalV
+        self.posicion = posicion
+        self.globalV = globalV
         self.inHeap = Heap
 
     def getID(self):

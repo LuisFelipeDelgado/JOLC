@@ -3,62 +3,67 @@ from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from Instrucciones.Return import Return
 from Excepciones.Excepcion import Excepcion
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
 
-
 class If(Expresion):
-    def __init__(self, condicion, instruccionesIf, instruccionesElse, fila, columna):
+    def __init__(self, condicion, instruccionesIf, instruccionesElse, fila, columna, salidaE=None):
         self.condicion = condicion
         self.listainstrucciones = instruccionesIf
         self.listainstrucciones2 = instruccionesElse
         self.fila = fila
         self.columna = columna
+        self.salida=salidaE
 
     def interpretar(self, tree, table):
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
+        codigoR.addComment("Compilacion de If")
         condicion = self.condicion.interpretar(tree, table)
         if isinstance(condicion, Excepcion): return condicion
 
         if condicion.tipo == TIPOS.BOOLEANO:
+            codigoR.putE(condicion.ev)
             if self.listainstrucciones2 is not None:
                 if isinstance(self.listainstrucciones2, list):
-                    if bool(condicion.valor) == True:
-                        for instruccion in self.listainstrucciones:
-                            result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL IF
-                            if isinstance(result, Excepcion) : return result
-                            elif isinstance(result, Break): return result
-                            elif isinstance(result, Return): return result
-                        return True
-                    else:   # VERIFICA SI ES VERDADERA LA CONDICION
-                        for instruccion in self.listainstrucciones2:
-                            result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL ELSE
-                            if isinstance(result, Excepcion) : tree.updateConsola(result.toString())
-                            elif isinstance(result, Break): return result
-                            elif isinstance(result, Return): return result
-                        return False
-                
-                elif isinstance(self.listainstrucciones2, If):
-                    if bool(condicion.valor) == True:
-                        for instruccion in self.listainstrucciones:
-                            result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL IF
-                            if isinstance(result, Excepcion) : return result
-                            elif isinstance(result, Break): return result
-                            elif isinstance(result, Continue): return result
-                            elif isinstance(result, Return): return result
-                    else:               #ELSE
-                        return self.listainstrucciones2.interpretar(tree, table)
-            else:
-                if bool(condicion.valor) == True:
                     for instruccion in self.listainstrucciones:
                         result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL IF
-                        if isinstance(result, Excepcion) : return result
-                        elif isinstance(result, Break): return result
-                        elif isinstance(result, Continue): return result
-                        elif isinstance(result, Return): return result
-                    return True
-                else:               #ELSE
-                    return False
+                        if result is not None : return result
+                    if self.salida is None:
+                        salidaIf = codigoR.newE()
+                    else:
+                        salidaIf = self.salida
+                    codigoR.GoTo(salidaIf)
+                    codigoR.putE(condicion.ef)
+                    for instruccion in self.listainstrucciones2:
+                        result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL ELSE
+                        if result is not None : return result
+                    codigoR.putE(salidaIf)
+
+                elif isinstance(self.listainstrucciones2, If):
+                    for instruccion in self.listainstrucciones:
+                        result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL IF
+                        if result is not None : return result
+                    if self.salida is None:
+                        salidaIf = codigoR.newE()
+                    else:
+                        salidaIf = self.salida
+                    codigoR.GoTo(salidaIf)
+                    codigoR.putE(condicion.ef)
+                    self.listainstrucciones2.salida=salidaIf
+                    self.listainstrucciones2.interpretar(tree, table)
+            else:
+                for instruccion in self.listainstrucciones:
+                    result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL IF
+                    if result is not None : return result
+                if self.salida is None:
+                    codigoR.putE(condicion.ef)
+                else:
+                    salidaIf = self.salida
+                    codigoR.putE(condicion.ef)
+                    codigoR.putE(salidaIf)
 
         else:
             return Excepcion("Semantico", "Tipo de dato no booleano en IF.", self.fila, self.columna)
