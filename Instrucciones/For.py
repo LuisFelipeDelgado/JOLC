@@ -7,6 +7,7 @@ from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
 from Instrucciones.Continue import Continue
 from TS.Simbolo import Simbolo
+from TS.TCI import TCI
 import copy
 
 class For(Expresion):
@@ -20,6 +21,97 @@ class For(Expresion):
 
     def interpretar(self, tree, table):
         nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
+        nuevaTabla.entorno = "For"
+        if self.expresion2 is not None:
+            tmp1p = self.expresion1.interpretar(tree, table)
+            tmp1=copy.deepcopy(tmp1p)
+            tmp2p = self.expresion2.interpretar(tree, table)
+            tmp2=copy.deepcopy(tmp2p)
+            declara = Simbolo(tmp1p.tipo, self.condicion, self.fila, self.columna, None,nuevaTabla.tamano,False,False)
+            porsi = nuevaTabla.actualizarTabla(declara)
+            codigoAux = TCI()
+            codigoR = codigoAux.getInstance()
+            tempP = codigoR.addTemp()
+            continueE = codigoR.newE()
+            entradaE = codigoR.newE()
+            salidaE = codigoR.newE()
+            condicionE = codigoR.newE()
+            codigoR.addExp(tempP,'P',porsi.posicion,'+')
+            codigoR.setStack(tempP,tmp1.valor)
+            codigoR.putE(continueE)
+            temp1 = codigoR.addTemp()
+            codigoR.addExp(temp1,'P',porsi.posicion,'+')
+            temp2 = codigoR.addTemp()
+            codigoR.getStack(temp2,temp1)     #NUEVO ENTORNO
+            nuevaTabla.entorno = "For"
+            nuevaTabla.breakE = salidaE
+            nuevaTabla.continueE = condicionE
+            codigoR.addIf(temp2,tmp2.valor,'<=',entradaE)
+            codigoR.GoTo(salidaE)
+            codigoR.putE(entradaE)
+            for instr in  self.instrucciones:
+                instr.interpretar(tree, nuevaTabla)
+            codigoR.GoTo(condicionE)
+            codigoR.putE(condicionE)
+            temp1 = codigoR.addTemp()
+            codigoR.addExp(temp1,'P',porsi.posicion,'+')
+            temp2 = codigoR.addTemp()
+            codigoR.getStack(temp2,temp1)
+            temp3 = codigoR.addTemp()
+            codigoR.addExp(temp3,temp2,'1','+')
+            codigoR.setStack(temp1,temp3)
+            codigoR.GoTo(continueE)
+            codigoR.putE(salidaE)
+        else:
+            tmp1p = self.expresion1.interpretar(tree, table)
+            tmp1=copy.deepcopy(tmp1p)
+            declara = Simbolo(tmp1p.tipo, self.condicion, self.fila, self.columna, None,nuevaTabla.tamano+1,False,True)
+            porsi = nuevaTabla.actualizarTabla(declara)
+            nuevaTabla.tamano=nuevaTabla.tamano+1
+            codigoAux = TCI()
+            codigoR = codigoAux.getInstance()
+            tempP = codigoR.addTemp()
+            tempP2 = codigoR.addTemp()
+            continueE = codigoR.newE()
+            entradaE = codigoR.newE()
+            salidaE = codigoR.newE()
+            condicionE = codigoR.newE()
+            codigoR.addExp(tempP,'P',int(porsi.posicion)-1,'+')
+            codigoR.setStack(tempP,tmp1.valor)
+            temp1 = codigoR.addTemp()
+            codigoR.getStack(temp1,tempP) 
+            
+            codigoR.addExp(tempP2,'H','','')
+            tempP3 = codigoR.addTemp()
+            codigoR.getHeap(tempP3,temp1)
+            codigoR.setHeap('H',tempP3)
+            codigoR.addExp('H','H','1','+')
+            codigoR.setHeap('H','-1')
+            codigoR.addExp('H','H','1','+')
+            codigoR.addExp(tempP,'P',porsi.posicion,'+')
+            codigoR.setStack(tempP,tempP2)
+            
+  
+            codigoR.putE(continueE)  #NUEVO ENTORNO
+            temp2 = codigoR.addTemp()
+            codigoR.getHeap(temp2,tempP2)   
+            nuevaTabla.entorno = "For"
+            nuevaTabla.breakE = salidaE
+            nuevaTabla.continueE = condicionE
+            codigoR.addIf(temp2,'-1','!=',entradaE)
+            codigoR.GoTo(salidaE)
+            codigoR.putE(entradaE)
+            for instr in  self.instrucciones:
+                instr.interpretar(tree, nuevaTabla)
+            codigoR.GoTo(condicionE)
+            codigoR.putE(condicionE)
+            codigoR.addExp(temp1,temp1,'1','+')
+            codigoR.getHeap(tempP3,temp1)
+            codigoR.setHeap(tempP2,tempP3)
+            codigoR.GoTo(continueE)
+            codigoR.putE(salidaE)
+
+        '''nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
         nuevaTabla.setEntorno("FOR")
         tree.tablas.append(nuevaTabla)
         if self.expresion2 is not None:
@@ -120,8 +212,8 @@ class For(Expresion):
                         if isinstance(result, Continue): break
                         if isinstance(result, Return): return result
             else:
-                return Excepcion("Semantico", "Tipo de expresion erronea para iterar en For.", self.fila, self.columna)
-
+                return Excepcion("Semantico", "Tipo de expresion erronea para iterar en For.", self.fila, self.columna)'''
+    
     def getNodo(self):
         nodo1 = NodoAST("FOR")
         nodo1.agregarHijo("for")

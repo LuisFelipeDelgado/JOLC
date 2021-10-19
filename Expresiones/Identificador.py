@@ -36,7 +36,7 @@ class Identificador(Expresion):
         tempP = var.posicion
         if(not var.globalV):
             tempP = codigoR.addTemp()
-            codigoR.addExp(tempP, 'P', var.pos, "+")
+            codigoR.addExp(tempP, 'P', var.posicion, "+")
         codigoR.getStack(temp, tempP)
 
         if var.tipo != TIPOS.BOOLEANO:

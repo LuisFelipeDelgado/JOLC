@@ -22,6 +22,7 @@ class While(Expresion):
         codigoR.putE(continueE)
         condicion = self.condicion.interpretar(tree, table)
         nuevaTabla = TablaSimbolos(table)       #NUEVO ENTORNO
+        nuevaTabla.entorno = "While"
         nuevaTabla.breakE = condicion.ef
         nuevaTabla.continueE = continueE
         codigoR.putE(condicion.ev)

@@ -129,6 +129,9 @@ class Aritmetica(Expresion):
                     res_left.valor = str(res_left.valor)
                     res_right.valor = int(res_right.valor)*1.0
                     res_right.valor = str(res_right.valor)
+                    okE = codigoR.newE()
+                    badE = codigoR.newE()
+                    codigoR.addIf(res_right.valor,'0','!=',okE)
                     codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.DECIMAL, True)
                 elif(res_right.tipo==TIPOS.DECIMAL):

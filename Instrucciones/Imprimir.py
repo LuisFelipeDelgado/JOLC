@@ -27,7 +27,6 @@ class Imprimir(Expresion):
                     codigoR.putE(val.ev)
                     codigoR.printTrue()
                     codigoR.GoTo(tempLbl)
-                    
                     codigoR.putE(val.ef)
                     codigoR.printFalse()
                     codigoR.putE(tempLbl)
