@@ -1,8 +1,8 @@
 class Return:
-    def __init__(self, val, retType, isTemp, auxType = ""):
+    def __init__(self, val, retType, isTemp, aux = None):
         self.valor = val
         self.tipo = retType
-        self.auxType = auxType
+        self.aux = aux
         self.isTemp = isTemp
         self.trueLbl = ''
         self.falseLbl = ''

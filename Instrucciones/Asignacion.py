@@ -21,7 +21,7 @@ class Asignacion(Expresion):
             return self.tipo
         value = self.expresion.interpretar(tree, table)
         isHeap = False
-        if (value.tipo == TIPOS.CADENA) | (value.tipo==TIPOS.STRUCT):
+        if (value.tipo == TIPOS.CADENA) | (value.tipo==TIPOS.STRUCT) | (value.tipo==TIPOS.ARREGLO):
             isHeap=True
         if(self.tipo==None):
             if isinstance(value, Excepcion):
@@ -32,7 +32,10 @@ class Asignacion(Expresion):
                 return value
             if(value.tipo!=self.tipo.tipos):
                 return Excepcion("Semantico", "Tipo erroneo para declaracion",self.fila,self.columna)
-        simbolo = Simbolo(value.tipo, self.identificador, self.fila, self.columna, None,table.tamano,table.anterior==None,isHeap)
+        if value.tipo==TIPOS.ARREGLO:
+            simbolo = Simbolo(value.tipo, self.identificador, self.fila, self.columna, value.aux,table.tamano,table.anterior==None,isHeap)
+        else:
+            simbolo = Simbolo(value.tipo, self.identificador, self.fila, self.columna, None,table.tamano,table.anterior==None,isHeap)
 
         result = table.actualizarTabla(simbolo)     # Si no se encuentra el simbolo, lo agrega 
         tempP = result.posicion

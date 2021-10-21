@@ -45,7 +45,9 @@ class Imprimir(Expresion):
                     temp = codigoR.addTemp()
                     codigoR.getStack(temp, 'P')
                     codigoR.retEnv(table.tamano)
-                '''valor1 = m.interpretar(tree,table)
+                '''elif val.tipo == TIPOS.ARREGLO:
+
+                valor1 = m.interpretar(tree,table)
                 if isinstance(valor1, Excepcion):
                     return valor1
                 if not isinstance(valor1,dict):

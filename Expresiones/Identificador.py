@@ -42,7 +42,7 @@ class Identificador(Expresion):
         if var.tipo != TIPOS.BOOLEANO:
             codigoR.addComment("Fin compilacion acceso")
             codigoR.addSpace()
-            return Return(temp, var.tipo, True)
+            return Return(temp, var.tipo, True,var.valor)
         if self.ev == '':
             self.ev = codigoR.newE()
         if self.ef == '':

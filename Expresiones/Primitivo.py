@@ -48,6 +48,26 @@ class Primitivo(Expresion):
             codigoR.nextHeap()
 
             return Return(retTemp, TIPOS.CADENA, True)
+        elif self.tipo == TIPOS.ARREGLO:
+            retTemp = codigoR.addTemp()
+            codigoR.addExp(retTemp, 'H', '', '')
+            codigoR.setHeap('H', len(self.valor))   # heap[H] = NUM;
+            retTemp2 = codigoR.addTemp()
+            codigoR.addExp('H', 'H', len(self.valor)+1, '+')
+            codigoR.addExp(retTemp2, retTemp, '1', '+')
+            tiposA = []
+            tiposS = None
+            for char in self.valor:
+                char1 = char.interpretar(tree,table)
+                if tiposS is None:
+                    tiposS = char1.tipo
+                    tiposA.append(tiposS)
+                    if char1.aux is not None:
+                        tiposA=tiposA+char1.aux
+                codigoR.setHeap(retTemp2, char1.valor) 
+                codigoR.addExp(retTemp2, retTemp2, '1', '+')
+            print(tiposA)
+            return Return(retTemp, TIPOS.ARREGLO, True,tiposA)
 
     def getNodo(self):
         nodo1 = NodoAST("PRIMITIVO")
