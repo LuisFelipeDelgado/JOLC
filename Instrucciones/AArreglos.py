@@ -71,7 +71,3 @@ class AArreglos(Expresion):
                 nodo.agregarHijo("]")
         nodo1.agregarHijoNodo(nodo)
         return nodo1
-
-    def obtenervals(self,lista,posicion,tree,table):
-        
-        return

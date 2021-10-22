@@ -1,8 +1,10 @@
+import copy
 from Expresiones.Identificador import Identificador
 from Abstract.instruccion import Expresion
 from Instrucciones.Return import Return
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
+from TS.TCI import TCI
 from TS.Tipo import TIPO, TIPOS
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
@@ -21,23 +23,31 @@ class MArreglos(Expresion):
         result = Identificador(self.identificador,self.fila,self.columna)
         result = result.interpretar(tree,table)
         if result.tipo==TIPOS.ARREGLO:
-            if isinstance(result.valor, list):
-                listtmp = result.valor
+            codigoAux = TCI()
+            codigoR = codigoAux.getInstance()
+            temp2 = None
+            temp1 = None
+            listtmp = None
+            if isinstance(result.aux, list):
+                if len(result.aux) != len(self.posiciones):
+                    listtmp = copy.deepcopy(result.aux)
+                    for i in range(len(self.posiciones)):
+                        listtmp.pop(i)
                 for i in self.posiciones:
                     iC = i.interpretar(tree,table)
-                    iC = iC.valor
-                    tmp = listtmp[iC-1].interpretar(tree,table)
-                    if isinstance(tmp.valor, list):
-                        if i == self.posiciones[-1]:
-                            retorno = self.expresion.interpretar(tree,table)
-                            listtmp[iC-1] = retorno
-                            return None
-                        listtmp = tmp.valor
-                    elif i == self.posiciones[-1]:
-                        retorno = self.expresion.interpretar(tree,table)
-                        listtmp[iC-1] = retorno
-                        return None
-                return None
+                    temp1 = codigoR.addTemp()
+                    if i == self.posiciones[0]:
+                        codigoR.addExp(temp1, result.valor,iC.valor, "+")
+                        temp2 = codigoR.addTemp()
+                        codigoR.getHeap(temp2,temp1)
+                    elif i != self.posiciones[-1]:
+                        codigoR.addExp(temp1, temp2,iC.valor, "+")
+                        temp2 = codigoR.addTemp()
+                        codigoR.getHeap(temp2,temp1)
+                    else:
+                        codigoR.addExp(temp1, temp2,iC.valor, "+")
+                retorno = self.expresion.interpretar(tree,table)
+                codigoR.setHeap(temp1,retorno.valor)
         else:
             return Excepcion("Semantico", "Variable no es un Arreglo", self.fila, self.columna)
 

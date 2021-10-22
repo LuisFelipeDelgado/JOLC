@@ -45,40 +45,40 @@ class Imprimir(Expresion):
                     temp = codigoR.addTemp()
                     codigoR.getStack(temp, 'P')
                     codigoR.retEnv(table.tamano)
-                '''elif val.tipo == TIPOS.ARREGLO:
-
-                valor1 = m.interpretar(tree,table)
-                if isinstance(valor1, Excepcion):
-                    return valor1
-                if not isinstance(valor1,dict):
-                    if  valor1.tipo==TIPOS.ARREGLO:
-                        val += "["
-                        for i in valor1.valor:
-                            tmp = i.interpretar(tree,table)
-                            if  tmp.tipo==TIPOS.ARREGLO:
-                                val += self.print_arreglo(tmp.valor,tree,table)
-                            else:
-                                val += str(tmp.valor)
-                            if i != valor1.valor[-1]:
-                                val += ","
-                        val += "]"
-                    else:
-                        val += str(valor1.valor)
-                else:
-                    val += "{"
-                    for i in valor1['atributos']:
-                        if isinstance(valor1['atributos'][i],dict):
-                            val += self.print_struct(valor1['atributos'][i],tree,table)
+                elif val.tipo == TIPOS.ARREGLO:
+                    
+                    '''valor1 = m.interpretar(tree,table)
+                    if isinstance(valor1, Excepcion):
+                        return valor1
+                    if not isinstance(valor1,dict):
+                        if  valor1.tipo==TIPOS.ARREGLO:
+                            val += "["
+                            for i in valor1.valor:
+                                tmp = i.interpretar(tree,table)
+                                if  tmp.tipo==TIPOS.ARREGLO:
+                                    val += self.print_arreglo(tmp.valor,tree,table)
+                                else:
+                                    val += str(tmp.valor)
+                                if i != valor1.valor[-1]:
+                                    val += ","
+                            val += "]"
                         else:
-                            tmp = valor1['atributos'][i].interpretar(tree,table)
-                            if  tmp.tipo==TIPOS.ARREGLO:
-                                val += self.print_arreglo(tmp.valor,tree,table)
+                            val += str(valor1.valor)
+                    else:
+                        val += "{"
+                        for i in valor1['atributos']:
+                            if isinstance(valor1['atributos'][i],dict):
+                                val += self.print_struct(valor1['atributos'][i],tree,table)
                             else:
-                                val += str(tmp.valor)
-                            val += ","
-                    if val[:-1] !='}':
-                        val = val[:-1]
-                    val += "}"'''
+                                tmp = valor1['atributos'][i].interpretar(tree,table)
+                                if  tmp.tipo==TIPOS.ARREGLO:
+                                    val += self.print_arreglo(tmp.valor,tree,table)
+                                else:
+                                    val += str(tmp.valor)
+                                val += ","
+                        if val[:-1] !='}':
+                            val = val[:-1]
+                        val += "}"'''
         if self.opcion == 1:
             codigoR.addPrint("c", 10)
         
