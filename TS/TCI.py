@@ -18,6 +18,7 @@ class TCI:
         self.powString = False
         self.Pow = False
         self.compareString = False
+        self.mathE = False
 
     #------------------------------------------------REINICIO-----------------------------------------------
             
@@ -374,6 +375,27 @@ class TCI:
         self.putE(efE)
         self.setStack('P','0')
         self.putE(returnE)
+        self.addEndFunc()
+        self.inNatives = False
+        return
+
+    def printMathE(self):
+        if(self.mathE):
+            return
+        self.mathE = True
+        self.inNatives = True
+
+        self.addBeginFunc('MathError')
+        self.addPrint('c', '77')
+        self.addPrint('c', '97')
+        self.addPrint('c', '116')
+        self.addPrint('c', '104')
+        self.addPrint('c', '69')
+        self.addPrint('c', '114')
+        self.addPrint('c', '114')
+        self.addPrint('c', '111')
+        self.addPrint('c', '114')
+        self.addPrint("c", 10)
         self.addEndFunc()
         self.inNatives = False
         return

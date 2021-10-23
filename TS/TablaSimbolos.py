@@ -38,6 +38,7 @@ class TablaSimbolos:
         while tablaActual != None:
             if simbolo.id in tablaActual.tabla :
                 tablaActual.tabla[simbolo.id].setValor(simbolo.getValor())
+                tablaActual.tabla[simbolo.id].setTipo(simbolo.getTipo())
                 return tablaActual.tabla[simbolo.id]
             else:
                 tablaActual = tablaActual.anterior
