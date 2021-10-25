@@ -51,12 +51,7 @@ reservadas = {
     'trunc'     : 'RTRUNC',
     'float'     : 'RFLOAT2',
     'string'    : 'RSTRING2',
-    'typeof'    : 'RTYPEOF',
-    'push'      : 'RPUSH',
-    'pop'       : 'RPOP',
     'length'    : 'RLENGTH',
-    'lowercase' : 'RLOWERCASE',
-    'uppercase' : 'RUPPERCASE',
     'struct'    : 'RSTRUCT',
     'mutable'   : 'RMUTABLE',
     'nothing'   : 'RNOTHING',
@@ -69,8 +64,6 @@ tokens  = [
     'DOSPUNTOS',
     'PARA',
     'PARC',
-    'LLAVEA',
-    'LLAVEC',
     'CORA',
     'CORC',
     'COMA',
@@ -103,8 +96,6 @@ t_DOSPUNTOS     = r':'
 t_DOBLEDOS      = r'::'
 t_PARA          = r'\('
 t_PARC          = r'\)'
-t_LLAVEA        = r'{'
-t_LLAVEC        = r'}'
 t_CORA          = r'\['
 t_CORC          = r'\]'
 t_COMA          = r','
@@ -254,7 +245,6 @@ def p_instruccion(t) :
                         | llamada_instr PUNTOCOMA
                         | return_instr 
                         | marreglo_instr PUNTOCOMA
-                        | push_instr PUNTOCOMA
                         | struct_instr PUNTOCOMA
                         | mstruct_instr PUNTOCOMA
     '''
@@ -578,11 +568,7 @@ def p_funcion_nativa(t):
             | RTRUNC PARA tipo COMA expresion PARC
             | RFLOAT2 PARA expresion PARC
             | RSTRING2 PARA expresion PARC
-            | RTYPEOF PARA expresion PARC
-            | RPOP NOT PARA expresion PARC
             | RLENGTH PARA expresion PARC
-            | RLOWERCASE PARA expresion PARC
-            | RUPPERCASE PARA expresion PARC
     '''
     if t[1] == 'parse':
         t[0] = FNativas(FuncionNativa.PARSE, t[5], t.lineno(2), find_column(input, t.slice[2]), t[3])
@@ -592,16 +578,8 @@ def p_funcion_nativa(t):
         t[0] = FNativas(FuncionNativa.FLOAT, t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[1] == 'string':
         t[0] = FNativas(FuncionNativa.STRING, t[3], t.lineno(2), find_column(input, t.slice[2]))
-    elif t[1] == 'typeof':
-        t[0] = FNativas(FuncionNativa.TYPEOF, t[3], t.lineno(2), find_column(input, t.slice[2]))
-    elif t[1] == 'pop':
-        t[0] = FNativas(FuncionNativa.POP, t[4], t.lineno(2), find_column(input, t.slice[2]))
     elif t[1] == 'length':
         t[0] = FNativas(FuncionNativa.LENGTH, t[3], t.lineno(2), find_column(input, t.slice[2]))
-    elif t[1] == 'lowercase':
-        t[0] = FNativas(FuncionNativa.LOWERCASE, t[3], t.lineno(2), find_column(input, t.slice[2]))
-    elif t[1] == 'uppercase':
-        t[0] = FNativas(FuncionNativa.UPPERCASE, t[3], t.lineno(2), find_column(input, t.slice[2]))
 
 #///////////////////////////////////////ARREGLOS//////////////////////////////////////////////////
 
@@ -636,12 +614,6 @@ def p_mArreglos(t):
     marreglo_instr : ID varios_cor IGUAL expresion
     '''
     t[0] = MArreglos(t[1], t[2], t[4], t.lineno(1), find_column(input, t.slice[1]))
-
-def p_push(t):
-    '''
-    push_instr : RPUSH NOT PARA expresion COMA expresion PARC
-    '''
-    t[0] = FNativas(FuncionNativa.PUSH, t[4], t.lineno(2), find_column(input, t.slice[2]), t[6])
 
 #////////////////////////////////////////STRUCTS///////////////////////////////////////////////////
 

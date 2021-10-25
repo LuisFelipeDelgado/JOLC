@@ -113,6 +113,9 @@ class TCI:
     
     def addMod(self, result, left, right):
         self.codeIn(f'{result}=math.Mod({left},{right});\n')
+
+    def addTrunc(self, result,val):
+        self.codeIn(f'{result}=float64(int({val}));\n')
     
     #------------------------------------------------FUNCIONES-----------------------------------------------
     
