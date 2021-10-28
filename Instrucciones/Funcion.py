@@ -2,27 +2,50 @@ from TS.Simbolo import Simbolo
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from TS.Tipo import TIPOS
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
 from Excepciones.Excepcion import Excepcion
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
+from TS.TCI import TCI
 
 
 class Funcion(Expresion):
-    def __init__(self, nombre, parametros, instrucciones, fila, columna):
+    def __init__(self, nombre, tipo, parametros, instrucciones, fila, columna):
         self.nombre = nombre
+        self.tipos=None
+        self.tipo=None
+        if isinstance(tipo,list):
+            self.tipo=TIPOS.ARREGLO
+            self.tipos=tipo
+        elif tipo is not None:
+            self.tipo=tipo
         self.parametros = parametros
         self.instrucciones = instrucciones
         self.fila = fila
         self.columna = columna
     
     def interpretar(self, tree, table):
-        listas=[]
-        listas.append(self.parametros)
-        listas.append(self.instrucciones)
-        declara = Simbolo(TIPOS.FUNCION, self.nombre, self.fila, self.columna, listas)
-        result = table.actualizarTabla(declara)
-        return None
+        table.setFuncion(self.nombre, self)
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
+        
+        nuevaTabla = TablaSimbolos(table)
+
+        returnE = codigoR.newE()
+        nuevaTabla.returnE = returnE
+        nuevaTabla.tamano = 1
+
+        for param in self.parametros:
+            simbolo = Simbolo(param.tipo, param.nombre, self.fila,self.columna,param.tipos,nuevaTabla.tamano,False, ((param.tipo == TIPOS.CADENA) | (param.tipo == TIPOS.STRUCT) | (param.tipo == TIPOS.ARREGLO)))
+            porsi = nuevaTabla.actualizarTabla(simbolo)
+        
+        codigoR.addBeginFunc(self.nombre)
+
+        for instr in self.instrucciones:
+            instr.interpretar(tree,nuevaTabla)
+        
+        codigoR.putE(returnE)
+        codigoR.addEndFunc()
 
     def getNodo(self):
         nodo1 = NodoAST("FUNCION")

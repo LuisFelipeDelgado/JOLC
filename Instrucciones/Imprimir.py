@@ -23,13 +23,13 @@ class Imprimir(Expresion):
                 elif val.tipo == TIPOS.DECIMAL:
                     codigoR.addPrint("f",val.valor)
                 elif val.tipo == TIPOS.BOOLEANO:
-                    tempLbl = codigoR.newE()
+                    tempE = codigoR.newE()
                     codigoR.putE(val.ev)
                     codigoR.printTrue()
-                    codigoR.GoTo(tempLbl)
+                    codigoR.GoTo(tempE)
                     codigoR.putE(val.ef)
                     codigoR.printFalse()
-                    codigoR.putE(tempLbl)
+                    codigoR.putE(tempE)
                 elif val.tipo == TIPOS.CADENA:
                     codigoR.fPrintString()
 
@@ -46,8 +46,10 @@ class Imprimir(Expresion):
                     codigoR.getStack(temp, 'P')
                     codigoR.retEnv(table.tamano)
                 elif val.tipo == TIPOS.ARREGLO:
-                    codigoR.addPrint("c",'')
-                    codigoR.addPrint("c",'')
+                    recorrer = codigoR.newE()
+                    salir = codigoR.newE()
+                    codigoR.addPrint('c','91')
+                    codigoR.addPrint('c','93')
                     '''valor1 = m.interpretar(tree,table)
                     if isinstance(valor1, Excepcion):
                         return valor1

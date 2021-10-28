@@ -30,7 +30,7 @@ class Asignacion(Expresion):
             value = self.expresion.interpretar(tree, table)
             if isinstance(value, Excepcion):
                 return value
-            if(value.tipo!=self.tipo.tipos):
+            if(value.tipo!=self.tipo):
                 return Excepcion("Semantico", "Tipo erroneo para declaracion",self.fila,self.columna)
         if value.tipo==TIPOS.ARREGLO:
             simbolo = Simbolo(value.tipo, self.identificador, self.fila, self.columna, value.aux,table.tamano,table.anterior==None,isHeap)
@@ -77,16 +77,16 @@ class Asignacion(Expresion):
 
     def returnTipo(self):
         ret=""
-        if self.tipo.tipos==TIPOS.CADENA:
+        if self.tipo==TIPOS.CADENA:
             ret="String"
-        elif self.tipo.tipos==TIPOS.BOOLEANO:
+        elif self.tipo==TIPOS.BOOLEANO:
             ret="Bool"
-        elif self.tipo.tipos==TIPOS.DECIMAL:
+        elif self.tipo==TIPOS.DECIMAL:
             ret="Float64"
-        elif self.tipo.tipos==TIPOS.ENTERO:
+        elif self.tipo==TIPOS.ENTERO:
             ret="Int64"
-        elif self.tipo.tipos==TIPOS.ARREGLO:
+        elif self.tipo==TIPOS.ARREGLO:
             ret="Arreglo"
-        elif self.tipo.tipos==TIPOS.CHARACTER:
+        elif self.tipo==TIPOS.CHARACTER:
             ret="Char"
         return ret

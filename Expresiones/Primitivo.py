@@ -66,7 +66,6 @@ class Primitivo(Expresion):
                         tiposA=tiposA+char1.aux
                 codigoR.setHeap(retTemp2, char1.valor) 
                 codigoR.addExp(retTemp2, retTemp2, '1', '+')
-            print(tiposA)
             return Return(retTemp, TIPOS.ARREGLO, True,tiposA)
 
     def getNodo(self):

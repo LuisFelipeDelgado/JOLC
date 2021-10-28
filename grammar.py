@@ -5,6 +5,7 @@
 from Abstract.NodoAST import NodoAST
 from Instrucciones.MStructs import MStruct
 from Instrucciones.AStructs import AStruct
+from Instrucciones.Parametro import Parametro
 from Instrucciones.Structs import Struct
 from Instrucciones.MArreglos import MArreglos
 from Instrucciones.AArreglos import AArreglos
@@ -46,7 +47,7 @@ reservadas = {
     'Bool'      : 'RBOOL',
     'Char'      : 'RCHAR',
     'String'    : 'RSTRING',
-    'Arreglo'   : 'RARREGLO',
+    'Vector'   : 'RARREGLO',
     'parse'     : 'RPARSE',
     'trunc'     : 'RTRUNC',
     'float'     : 'RFLOAT2',
@@ -64,6 +65,8 @@ tokens  = [
     'DOSPUNTOS',
     'PARA',
     'PARC',
+    'LLAVEA',
+    'LLAVEC',
     'CORA',
     'CORC',
     'COMA',
@@ -96,6 +99,8 @@ t_DOSPUNTOS     = r':'
 t_DOBLEDOS      = r'::'
 t_PARA          = r'\('
 t_PARC          = r'\)'
+t_LLAVEA        = r'{'
+t_LLAVEC        = r'}'
 t_CORA          = r'\['
 t_CORC          = r'\]'
 t_COMA          = r','
@@ -209,7 +214,7 @@ from Instrucciones.For import For
 from Instrucciones.Break import Break
 from Instrucciones.Funcion import Funcion
 from Instrucciones.Llamada import Llamada
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
 
 def p_init(t) :
     'init            : instrucciones'
@@ -316,20 +321,43 @@ def p_tipo(t):
                         | RBOOL
                         | RCHAR
                         | RSTRING
-                        | RARREGLO
+                        | RARREGLO LLAVEA tlista LLAVEC
     '''
     if t[1]=='Int64':
-        t[0] = TIPO(TIPOS.ENTERO)
+        t[0] = TIPOS.ENTERO
     elif t[1]=='Float64':
-        t[0] = TIPO(TIPOS.DECIMAL)
+        t[0] = TIPOS.DECIMAL
     elif t[1]=='Bool':
-        t[0] = TIPO(TIPOS.BOOLEANO)
+        t[0] = TIPOS.BOOLEANO
     elif t[1]=='Char':
-        t[0] = TIPO(TIPOS.CHARACTER)
+        t[0] = TIPOS.CHARACTER
     elif t[1]=='String':
-        t[0] = TIPO(TIPOS.CADENA)
-    elif t[1]=='Arreglo':
-        t[0] = TIPO(TIPOS.ARREGLO)
+        t[0] = TIPOS.CADENA
+    elif t[1]=='Vector':
+        t[0] = t[3]
+
+def p_tipo2(t):
+    '''
+    tlista              : RINT
+                        | RFLOAT
+                        | RBOOL
+                        | RCHAR
+                        | RSTRING
+                        | RARREGLO LLAVEA tlista LLAVEC
+    '''
+    if t[1]=='Int64':
+        t[0] = [TIPOS.ENTERO]
+    elif t[1]=='Float64':
+        t[0] = [TIPOS.DECIMAL]
+    elif t[1]=='Bool':
+        t[0] = [TIPOS.BOOLEANO]
+    elif t[1]=='Char':
+        t[0] = [TIPOS.CHARACTER]
+    elif t[1]=='String':
+        t[0] = [TIPOS.CADENA]
+    elif t[1]=='Vector':
+        t[0] = [TIPOS.ARREGLO]
+        t[0] = t[0] + t[3]
 
 #///////////////////////////////////////IF//////////////////////////////////////////////////
 
@@ -384,12 +412,20 @@ def p_continue(t) :
 #///////////////////////////////////////FUNCION//////////////////////////////////////////////////
 
 def p_funcion_1(t) :
-    'funcion_instr     : RFUNC ID PARA parametros PARC instrucciones REND'
-    t[0] = Funcion(t[2], t[4], t[6], t.lineno(1), find_column(input, t.slice[1]))
+    'funcion_instr     : RFUNC ID PARA parametros PARC DOBLEDOS tipo instrucciones REND'
+    t[0] = Funcion(t[2], t[7], t[4], t[8], t.lineno(1), find_column(input, t.slice[1]))
 
 def p_funcion_2(t) :
+    'funcion_instr     : RFUNC ID PARA PARC DOBLEDOS tipo instrucciones REND'
+    t[0] = Funcion(t[2], t[6], [], t[7], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_funcion_3(t) :
+    'funcion_instr     : RFUNC ID PARA parametros PARC instrucciones REND'
+    t[0] = Funcion(t[2], None, t[4], t[6], t.lineno(1), find_column(input, t.slice[1]))
+
+def p_funcion_4(t) :
     'funcion_instr     : RFUNC ID PARA PARC instrucciones REND'
-    t[0] = Funcion(t[2], [], t[5], t.lineno(1), find_column(input, t.slice[1]))
+    t[0] = Funcion(t[2], None, [], t[5], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////PARAMETROS//////////////////////////////////////////////////
 
@@ -398,7 +434,7 @@ def p_parametros_1(t) :
                     | parametros COMA ID DOBLEDOS ID  
                     | parametros COMA ID DOBLEDOS tipo  
     '''
-    t[1].append(t[3])
+    t[1].append(Parametro(t[3], t[5], t.lineno(1), find_column(input, t.slice[3])))
     t[0] = t[1]
     
 def p_parametros_2(t) :
@@ -407,7 +443,7 @@ def p_parametros_2(t) :
                    | ID DOBLEDOS tipo
     '''
     t[0] = []
-    t[0].append(t[1])
+    t[0].append(Parametro(t[1], t[3], t.lineno(1), find_column(input, t.slice[1])))
 
 #///////////////////////////////////////LLAMADA A FUNCION//////////////////////////////////////////////////
 
@@ -444,9 +480,9 @@ def p_return(t) :
                     | RRETURN PUNTOCOMA
     '''
     if t[2]==';':
-        t[0] = Return(None, t.lineno(1), find_column(input, t.slice[1]))
+        t[0] = ReturnI(None, t.lineno(1), find_column(input, t.slice[1]))
     else:
-        t[0] = Return(t[2], t.lineno(1), find_column(input, t.slice[1]))
+        t[0] = ReturnI(t[2], t.lineno(1), find_column(input, t.slice[1]))
 
 #///////////////////////////////////////EXPRESION//////////////////////////////////////////////////
 

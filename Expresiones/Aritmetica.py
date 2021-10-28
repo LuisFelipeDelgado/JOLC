@@ -36,7 +36,6 @@ class Aritmetica(Expresion):
         if (self.operador==OperadorAritmetico.MAS):
             op = '+'
             if(res_left.tipo==TIPOS.ENTERO):
-                print(res_left.valor)
                 if(res_right.tipo==TIPOS.ENTERO):
                     codigoR.addExp(temp, res_left.valor,res_right.valor,op)
                     return Return(temp, TIPOS.ENTERO, True)

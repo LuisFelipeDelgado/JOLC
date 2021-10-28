@@ -3,7 +3,8 @@ from Excepciones.Excepcion import Excepcion
 
 class TablaSimbolos:
     def __init__(self, anterior = None):
-        self.tabla = {} # Diccionario Vacio
+        self.tabla = {}
+        self.funciones = {}
         self.anterior = anterior
         self.tipo = None
         self.entorno = ""
@@ -29,6 +30,21 @@ class TablaSimbolos:
         while tablaActual != None:
             if id in tablaActual.tabla:
                 return tablaActual.tabla[id]           # RETORNA SIMBOLO
+            else:
+                tablaActual = tablaActual.anterior
+        return None
+
+    def setFuncion(self, id, simbolo): 
+        if id in self.funciones :
+            return Excepcion("Semantico", "Funcion " + simbolo.id + " ya existe", simbolo.fila, simbolo.columna)
+        else:
+            self.funciones[id] = simbolo
+
+    def getFuncion(self, id):            # obtener una variable
+        tablaActual = self
+        while tablaActual != None:
+            if id in tablaActual.funciones:
+                return tablaActual.funciones[id]           # RETORNA SIMBOLO
             else:
                 tablaActual = tablaActual.anterior
         return None

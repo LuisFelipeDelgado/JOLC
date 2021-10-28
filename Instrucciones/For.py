@@ -1,6 +1,6 @@
 from typing import NoReturn
 from Abstract.instruccion import Expresion
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
 from TS.Tipo import TIPO, TIPOS
@@ -39,6 +39,7 @@ class For(Expresion):
             condicionE = codigoR.newE()
             codigoR.addExp(tempP,'P',porsi.posicion,'+')
             codigoR.setStack(tempP,tmp1.valor)
+            
             codigoR.putE(continueE)
             temp1 = codigoR.addTemp()
             codigoR.addExp(temp1,'P',porsi.posicion,'+')

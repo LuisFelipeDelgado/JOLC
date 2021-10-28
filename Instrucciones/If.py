@@ -1,7 +1,7 @@
 from Instrucciones.Continue import Continue
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
 from Excepciones.Excepcion import Excepcion
 from TS.TCI import TCI
 from TS.Tipo import TIPOS
@@ -57,7 +57,6 @@ class If(Expresion):
             else:
                 for instruccion in self.listainstrucciones:
                     result = instruccion.interpretar(tree, table) #EJECUTA INSTRUCCION ADENTRO DEL IF
-                    if result is not None : return result
                 if self.salida is None:
                     codigoR.putE(condicion.ef)
                 else:

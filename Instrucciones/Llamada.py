@@ -1,9 +1,11 @@
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
+from Abstract.ReturnA import Return
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from TS.Simbolo import Simbolo
 from Instrucciones.Funcion import Funcion
 from Excepciones.Excepcion import Excepcion
+from TS.TCI import TCI
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
 from TS.Tipo import TIPOS
@@ -17,12 +19,42 @@ class Llamada(Expresion):
         self.columna = columna
     
     def interpretar(self, tree, table):
-        result = table.getVariable(self.nombre) ## OBTENER LA FUNCION
-        if result == None: # NO SE ENCONTRO LA FUNCION
-            return Excepcion("Semantico", "NO SE ENCONTRO EL IDENTIFICADOR: " + self.nombre, self.fila, self.columna)
+        result = table.getFuncion(self.nombre) ## OBTENER LA FUNCION
         # OBTENER PARAMETROS
-        if result.tipo==TIPOS.FUNCION:
-            nuevaTabla = TablaSimbolos(table)
+        if result != None:
+            paramValues = []
+            codigoAux = TCI()
+            codigoR = codigoAux.getInstance()
+            tamano = table.tamano
+            for param in self.parametros:
+                paramValues.append(param.interpretar(tree,table))
+            temp = codigoR.addTemp()
+
+            codigoR.addExp(temp, 'P', tamano+1, '+')
+            aux = 0
+            for param in paramValues:
+                aux = aux +1
+                codigoR.setStack(temp, param.valor)
+                if aux != len(paramValues):
+                    codigoR.addExp(temp, temp, '1', '+')
+                
+            codigoR.newEnv(tamano)
+            codigoR.callFun(self.nombre)
+            codigoR.getStack(temp, 'P')
+            codigoR.retEnv(tamano)
+            if False:
+                return
+            elif result.tipo == TIPOS.BOOLEANO:
+                ev = codigoR.newE()
+                ef = codigoR.newE()
+                codigoR.addIf(temp,'1','==',ev)
+                codigoR.GoTo(ef)
+                ret = Return(None,TIPOS.BOOLEANO,False)
+                ret.ev = ev
+                ret.ef = ef
+                return ret
+            return Return(temp, result.tipo, True,result.tipos)
+            '''nuevaTabla = TablaSimbolos(table)
             nuevaTabla.setEntorno("FUNCION"+self.nombre)
             if len(result.valor[0]) != len(self.parametros): #LA CANTIDAD DE PARAMETROS ES LA ADECUADA
                 return Excepcion("Semantico", "Cantidad de Parametros incorrecta.", self.fila, self.columna)
@@ -54,8 +86,8 @@ class Llamada(Expresion):
                         retorno=instrresult.result
                     else:
                         retorno = instrresult.result.interpretar(tree,nuevaTabla)
-                    return retorno
-        elif result.tipo==TIPOS.STRUCT:
+                    return retorno'''
+        else:
             dicts = copy.deepcopy(result.valor)
             if len(dicts['atributos']) != len(self.parametros):
                 return Excepcion("Semantico", "Cantidad de Parametros incorrecta.", self.fila, self.columna)

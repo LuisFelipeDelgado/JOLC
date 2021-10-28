@@ -221,18 +221,8 @@ class FNativas(Expresion):
             ret="FLOAT"
         elif self.funcion==FuncionNativa.STRING:
             ret="STRING"
-        elif self.funcion==FuncionNativa.TYPEOF:
-            ret="TYPEOF"
-        elif self.funcion==FuncionNativa.PUSH:
-            ret="PUSH!"
-        elif self.funcion==FuncionNativa.POP:
-            ret="POP!"
         elif self.funcion==FuncionNativa.LENGTH:
             ret="LENGTH"
-        elif self.funcion==FuncionNativa.LOWERCASE:
-            ret="LOWERCASE"
-        elif self.funcion==FuncionNativa.UPPERCASE:
-            ret="UPPERCASE"
         return ret
     
 class FuncionNativa(Enum):

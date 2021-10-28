@@ -1,5 +1,5 @@
 from Abstract.instruccion import Expresion
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
 from TS.TCI import TCI

@@ -2,7 +2,7 @@ from TS.Simbolo import Simbolo
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from TS.Tipo import TIPOS
-from Instrucciones.Return import Return
+from Instrucciones.Return import ReturnI
 from Excepciones.Excepcion import Excepcion
 from TS.TablaSimbolos import TablaSimbolos
 from Instrucciones.Break import Break
