@@ -27,7 +27,21 @@ class Llamada(Expresion):
             codigoR = codigoAux.getInstance()
             tamano = table.tamano
             for param in self.parametros:
-                paramValues.append(param.interpretar(tree,table))
+                if table.funcion and isinstance(param,Llamada):
+                    codigoR.addComment("Guardar Temp----------------------------------------")
+                    tempP1 = codigoR.temps[-1]
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.setStack(tempP,tempP1)
+                    table.tamano += 1
+                    paramValues.append(param.interpretar(tree,table))
+                    codigoR.addComment("RECUPERAR Temp--------------------------------------")
+                    table.tamano -= 1
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.getStack(tempP1,tempP)
+                else:
+                    paramValues.append(param.interpretar(tree,table))
             temp = codigoR.addTemp()
 
             codigoR.addExp(temp, 'P', tamano+1, '+')

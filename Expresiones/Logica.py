@@ -4,6 +4,7 @@ from Expresiones.Primitivo import Primitivo
 from Abstract.NodoAST import NodoAST
 from Abstract.instruccion import Expresion
 from Excepciones.Excepcion import Excepcion
+from Instrucciones.Llamada import Llamada
 from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
@@ -48,7 +49,18 @@ class Logica(Expresion):
             print("No se puede utilizar en expresion booleana")
             return
         codigoR.putE(lblAndOr)
-        res_right = self.OperacionDer.interpretar(tree,table)
+        if table.funcion and isinstance(self.OperacionDer,Llamada):
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.setStack(tempP,res_left.valor)
+                    table.tamano += 1
+                    res_right = self.OperacionDer.interpretar(tree, table)
+                    table.tamano -= 1
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.getStack(res_left.valor,tempP)
+        else:
+                res_right = self.OperacionDer.interpretar(tree, table)
         if res_right.tipo != TIPOS.BOOLEANO:
             print("No se puede utilizar en expresion booleana")
             return

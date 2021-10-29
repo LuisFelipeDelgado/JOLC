@@ -4,6 +4,7 @@ from enum import Enum
 from Abstract.NodoAST import NodoAST
 from Abstract.instruccion import Expresion
 from Excepciones.Excepcion import Excepcion
+from Instrucciones.Llamada import Llamada
 from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
@@ -24,7 +25,18 @@ class Aritmetica(Expresion):
         res_uni = None
         if self.OperacionDer is not None:
             res_left = self.OperacionIzq.interpretar(tree, table)
-            res_right = self.OperacionDer.interpretar(tree,table)
+            if table.funcion and isinstance(self.OperacionDer,Llamada):
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.setStack(tempP,res_left.valor)
+                    table.tamano += 1
+                    res_right = self.OperacionDer.interpretar(tree, table)
+                    table.tamano -= 1
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.getStack(res_left.valor,tempP)
+            else:
+                res_right = self.OperacionDer.interpretar(tree, table)
             if isinstance(res_left, Excepcion):
                 return res_left
             if isinstance(res_right, Excepcion):

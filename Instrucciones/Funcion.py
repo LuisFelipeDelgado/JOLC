@@ -30,7 +30,7 @@ class Funcion(Expresion):
         codigoR = codigoAux.getInstance()
         
         nuevaTabla = TablaSimbolos(table)
-
+        nuevaTabla.funcion = True
         returnE = codigoR.newE()
         nuevaTabla.returnE = returnE
         nuevaTabla.tamano = 1

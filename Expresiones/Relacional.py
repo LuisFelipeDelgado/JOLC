@@ -5,6 +5,7 @@ from Expresiones.Primitivo import Primitivo
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
+from Instrucciones.Llamada import Llamada
 from TS.TCI import TCI
 from TS.Tipo import TIPOS
 
@@ -30,7 +31,18 @@ class Relacional(Expresion):
             return res_right
 
         if res_left.tipo != TIPOS.BOOLEANO:
-            res_right = self.OperacionDer.interpretar(tree, table)
+            if table.funcion and isinstance(self.OperacionDer,Llamada):
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.setStack(tempP,res_left.valor)
+                    table.tamano += 1
+                    res_right = self.OperacionDer.interpretar(tree, table)
+                    table.tamano -= 1
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.getStack(res_left.valor,tempP)
+            else:
+                res_right = self.OperacionDer.interpretar(tree, table)
             if (res_left.tipo == TIPOS.ENTERO or res_left.tipo == TIPOS.DECIMAL) and (res_right.tipo == TIPOS.ENTERO or res_right.tipo == TIPOS.DECIMAL):
                 self.checkLabels()
                 codigoR.addIf(res_left.valor, res_right.valor, self.returnTipo(), self.ev)
@@ -80,7 +92,18 @@ class Relacional(Expresion):
             codigoR.addExp(leftTemp, '0', '', '')
 
             codigoR.putE(gotoRight)
-            res_right = self.OperacionDer.interpretar(tree, table)
+            if table.funcion and isinstance(self.OperacionDer,Llamada):
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.setStack(tempP,res_left.valor)
+                    table.tamano += 1
+                    res_right = self.OperacionDer.interpretar(tree, table)
+                    table.tamano -= 1
+                    tempP = codigoR.addTemp()
+                    codigoR.addExp(tempP,'P',table.tamano,'+')
+                    codigoR.getStack(res_left.valor,tempP)
+            else:
+                res_right = self.OperacionDer.interpretar(tree, table)
             if res_right.tipo != TIPOS.BOOLEANO:
                 print("Error, no se pueden comparar")
                 return

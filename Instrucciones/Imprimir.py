@@ -1,3 +1,4 @@
+import copy
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
 from Excepciones.Excepcion import Excepcion
@@ -46,9 +47,57 @@ class Imprimir(Expresion):
                     codigoR.getStack(temp, 'P')
                     codigoR.retEnv(table.tamano)
                 elif val.tipo == TIPOS.ARREGLO:
-                    recorrer = codigoR.newE()
-                    salir = codigoR.newE()
                     codigoR.addPrint('c','91')
+
+                    tempP = codigoR.addTemp()
+                    tempP3 = codigoR.addTemp()
+                    tempP4 = codigoR.addTemp()
+                    continueE = codigoR.newE()
+                    entradaE = codigoR.newE()
+                    salidaE = codigoR.newE()
+                    condicionE = codigoR.newE()
+                    codigoR.getHeap(tempP3,val.valor)
+                    codigoR.addExp(val.valor,val.valor,'1','+')
+                    codigoR.getHeap(tempP4,val.valor)
+        
+                    codigoR.putE(continueE)
+                    codigoR.addIf(tempP3,'0','!=',entradaE)
+                    codigoR.GoTo(salidaE)
+                    codigoR.putE(entradaE)
+                    
+                    if val.aux[0] == TIPOS.DECIMAL:
+                        codigoR.addPrint('f',tempP4)
+                    elif val.aux[0] == TIPOS.ENTERO:
+                        codigoR.addPrint('d',tempP4)
+                    elif val.aux[0] == TIPOS.CADENA:
+                        codigoR.fPrintString()
+
+                        paramTemp = codigoR.addTemp()
+                        
+                        codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                        codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                        codigoR.setStack(paramTemp, tempP4)
+                        
+                        codigoR.newEnv(table.tamano)
+                        codigoR.callFun('printString')
+
+                        temp = codigoR.addTemp()
+                        codigoR.getStack(temp, 'P')
+                        codigoR.retEnv(table.tamano)
+                    elif val.aux[0] == TIPOS.ARREGLO:
+                        aux2 = copy.deepcopy(val.aux)
+                        aux2.pop(0)
+                        self.print_arreglo(aux2,tempP4,table)
+
+                    codigoR.addPrint('c','44')
+                    codigoR.GoTo(condicionE)
+                    codigoR.putE(condicionE)
+                    codigoR.addExp(tempP3,tempP3,'1','-')
+                    codigoR.addExp(val.valor,val.valor,'1','+')
+                    codigoR.getHeap(tempP4,val.valor)
+                    codigoR.setStack(tempP,tempP4)
+                    codigoR.GoTo(continueE)
+                    codigoR.putE(salidaE)
                     codigoR.addPrint('c','93')
                     '''valor1 = m.interpretar(tree,table)
                     if isinstance(valor1, Excepcion):
@@ -112,18 +161,61 @@ class Imprimir(Expresion):
         nodo1.agregarHijo(";")
         return nodo1
     
-    def print_arreglo(self,lista,tree,table):
-        val = "["
-        for i in lista:
-            tmp = i.interpretar(tree,table)
-            if  tmp.tipo==TIPOS.ARREGLO:
-                val += self.print_arreglo(tmp.valor,tree,table)
-            else:
-                val += str(tmp.valor)
-            if i != lista[-1]:
-                val += ","
-        val += "]"
-        return val
+    def print_arreglo(self,aux,val,table):
+                    codigoAux = TCI()
+                    codigoR = codigoAux.getInstance()
+                    codigoR.addPrint('c','91')
+
+                    tempP = codigoR.addTemp()
+                    tempP3 = codigoR.addTemp()
+                    tempP4 = codigoR.addTemp()
+                    continueE = codigoR.newE()
+                    entradaE = codigoR.newE()
+                    salidaE = codigoR.newE()
+                    condicionE = codigoR.newE()
+                    codigoR.getHeap(tempP3,val)
+                    codigoR.addExp(val,val,'1','+')
+                    codigoR.getHeap(tempP4,val)
+        
+                    codigoR.putE(continueE)
+                    codigoR.addIf(tempP3,'0','!=',entradaE)
+                    codigoR.GoTo(salidaE)
+                    codigoR.putE(entradaE)
+                    
+                    if aux[0] == TIPOS.DECIMAL:
+                        codigoR.addPrint('f',tempP4)
+                    elif aux[0] == TIPOS.ENTERO:
+                        codigoR.addPrint('d',tempP4)
+                    elif aux[0] == TIPOS.CADENA:
+                        codigoR.fPrintString()
+
+                        paramTemp = codigoR.addTemp()
+                        
+                        codigoR.addExp(paramTemp, 'P', table.tamano, '+')
+                        codigoR.addExp(paramTemp, paramTemp, '1', '+')
+                        codigoR.setStack(paramTemp, tempP4)
+                        
+                        codigoR.newEnv(table.tamano)
+                        codigoR.callFun('printString')
+
+                        temp = codigoR.addTemp()
+                        codigoR.getStack(temp, 'P')
+                        codigoR.retEnv(table.tamano)
+                    elif aux[0] == TIPOS.ARREGLO:
+                        aux2 = copy.deepcopy(aux)
+                        aux2.pop(0)
+                        self.print_arreglo(aux2,tempP4,table)
+
+                    codigoR.addPrint('c','44')
+                    codigoR.GoTo(condicionE)
+                    codigoR.putE(condicionE)
+                    codigoR.addExp(tempP3,tempP3,'1','-')
+                    codigoR.addExp(val,val,'1','+')
+                    codigoR.getHeap(tempP4,val)
+                    codigoR.setStack(tempP,tempP4)
+                    codigoR.GoTo(continueE)
+                    codigoR.putE(salidaE)
+                    codigoR.addPrint('c','93')
     
     def print_struct(self,valor1,tree,table):
         val = "{"

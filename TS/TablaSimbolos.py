@@ -17,6 +17,7 @@ class TablaSimbolos:
             self.breakE = self.anterior.breakE
             self.continueE = self.anterior.continueE
             self.returnE = self.anterior.returnE
+        self.funcion = False
 
     def setVariable(self, simbolo):      # Agregar una variable
         if simbolo in self.tabla :
