@@ -1,6 +1,6 @@
 
 class Simbolo:
-    def __init__(self, tipo, identificador, fila, columna, valor, posicion, globalV, Heap):
+    def __init__(self, tipo, identificador, fila, columna, valor, posicion, globalV, Heap,tipoS=''):
         self.id = identificador
         self.fila = fila
         self.columna = columna
@@ -9,6 +9,7 @@ class Simbolo:
         self.posicion = posicion
         self.globalV = globalV
         self.inHeap = Heap
+        self.tipoS = tipoS
 
     def getID(self):
         return self.id

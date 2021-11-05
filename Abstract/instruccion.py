@@ -7,6 +7,7 @@ class Expresion(ABC):
         self.columna = columna
         self.ev = ''
         self.ef = ''
+        self.tipoS = ''
         super().__init__()
 
     @abstractmethod

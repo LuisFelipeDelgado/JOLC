@@ -22,9 +22,7 @@ class Struct(Expresion):
         if self.mutable:
             dictdec['mutable']=True
         dictdec['atributos']=copy.deepcopy(self.atributos)
-        declara = Simbolo(TIPOS.STRUCT, self.nombre, self.fila, self.columna, copy.deepcopy(dictdec))
-        result = table.actualizarTabla(declara)
-        return None
+        result = table.setStruct(self.nombre,dictdec)
 
     def getNodo(self):
         nodo1 = NodoAST("DECLARAR STRUCT")

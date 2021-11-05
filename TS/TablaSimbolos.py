@@ -5,6 +5,7 @@ class TablaSimbolos:
     def __init__(self, anterior = None):
         self.tabla = {}
         self.funciones = {}
+        self.structs = {}
         self.anterior = anterior
         self.tipo = None
         self.entorno = ""
@@ -46,6 +47,21 @@ class TablaSimbolos:
         while tablaActual != None:
             if id in tablaActual.funciones:
                 return tablaActual.funciones[id]           # RETORNA SIMBOLO
+            else:
+                tablaActual = tablaActual.anterior
+        return None
+
+    def setStruct(self, id, simbolo): 
+        if id in self.structs :
+            return Excepcion("Semantico", "Funcion " + id + " ya existe", simbolo.fila, simbolo.columna)
+        else:
+            self.structs[id] = simbolo
+
+    def getStruct(self, id):            # obtener una variable
+        tablaActual = self
+        while tablaActual != None:
+            if id in tablaActual.structs:
+                return tablaActual.structs[id]           # RETORNA SIMBOLO
             else:
                 tablaActual = tablaActual.anterior
         return None

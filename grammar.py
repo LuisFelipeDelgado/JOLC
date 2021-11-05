@@ -412,11 +412,15 @@ def p_continue(t) :
 #///////////////////////////////////////FUNCION//////////////////////////////////////////////////
 
 def p_funcion_1(t) :
-    'funcion_instr     : RFUNC ID PARA parametros PARC DOBLEDOS tipo instrucciones REND'
+    '''funcion_instr     : RFUNC ID PARA parametros PARC DOBLEDOS tipo instrucciones REND
+                    | RFUNC ID PARA parametros PARC DOBLEDOS ID instrucciones REND
+    '''
     t[0] = Funcion(t[2], t[7], t[4], t[8], t.lineno(1), find_column(input, t.slice[1]))
 
 def p_funcion_2(t) :
-    'funcion_instr     : RFUNC ID PARA PARC DOBLEDOS tipo instrucciones REND'
+    '''funcion_instr     : RFUNC ID PARA PARC DOBLEDOS tipo instrucciones REND
+                    | RFUNC ID PARA PARC DOBLEDOS ID instrucciones REND
+    '''
     t[0] = Funcion(t[2], t[6], [], t[7], t.lineno(1), find_column(input, t.slice[1]))
 
 def p_funcion_3(t) :
@@ -669,7 +673,7 @@ def p_atr_structs(t):
                     | atributos ID DOBLEDOS ID PUNTOCOMA
                     | atributos ID DOBLEDOS tipo PUNTOCOMA
     '''
-    t[1].setdefault(t[2])
+    t[1].setdefault(t[2],t[4])
     t[0] = t[1]
 
 def p_atr_structs2(t):
@@ -679,7 +683,7 @@ def p_atr_structs2(t):
                     | ID DOBLEDOS tipo PUNTOCOMA
     '''
     t[0] = {}
-    t[0].setdefault(t[1])
+    t[0].setdefault(t[1],t[3])
 
 def p_mstructs(t):
     '''

@@ -13,10 +13,9 @@ import copy
 
 class Llamada(Expresion):
     def __init__(self, nombre, parametros, fila, columna):
+        Expresion.__init__(self,TIPOS.FUNCION,fila,columna)
         self.nombre = nombre
         self.parametros = parametros
-        self.fila = fila
-        self.columna = columna
     
     def interpretar(self, tree, table):
         result = table.getFuncion(self.nombre) ## OBTENER LA FUNCION
@@ -67,7 +66,7 @@ class Llamada(Expresion):
                 ret.ev = ev
                 ret.ef = ef
                 return ret
-            return Return(temp, result.tipo, True,result.tipos)
+            return Return(temp, result.tipo, True,None,result.tipoS)
             '''nuevaTabla = TablaSimbolos(table)
             nuevaTabla.setEntorno("FUNCION"+self.nombre)
             if len(result.valor[0]) != len(self.parametros): #LA CANTIDAD DE PARAMETROS ES LA ADECUADA
@@ -102,15 +101,50 @@ class Llamada(Expresion):
                         retorno = instrresult.result.interpretar(tree,nuevaTabla)
                     return retorno'''
         else:
-            dicts = copy.deepcopy(result.valor)
-            if len(dicts['atributos']) != len(self.parametros):
-                return Excepcion("Semantico", "Cantidad de Parametros incorrecta.", self.fila, self.columna)
-            contador=0
+            '''contador=0
             for i in dicts['atributos']:
                 tmp = self.parametros[contador].interpretar(tree,table)
                 dicts['atributos'][i]=tmp
                 contador = contador+1
-            return dicts
+            #return dicts'''
+            result = table.getStruct(self.nombre)
+            dicts = copy.deepcopy(result)
+            if len(dicts['atributos']) != len(self.parametros):
+                return Excepcion("Semantico", "Cantidad de Parametros incorrecta.", self.fila, self.columna)
+            
+            if result != None:
+                self.tipoS = self.nombre
+
+                codigoAux = TCI()
+                codigoR = codigoAux.getInstance()
+
+                temp1 = codigoR.addTemp()
+                codigoR.addExp(temp1, 'H', '', '')
+
+                temp2 = codigoR.addTemp()
+                codigoR.addExp(temp2, temp1, '', '')
+
+                codigoR.addExp('H', 'H', len(dicts['atributos']), '+')
+
+                for i in self.parametros:
+                    value = i.interpretar(tree,table)
+
+                    if value.tipo != TIPOS.BOOLEANO:
+                        codigoR.setHeap(temp2, value.valor)
+                    else:
+                        returnE = codigoR.newE()
+                            
+                        codigoR.putE(value.ev)
+                        codigoR.setHeap(temp2, '1')
+                        codigoR.GoTo(returnE)
+
+                        codigoR.putE(value.ef)
+                        codigoR.setHeap(temp2, '0')
+
+                        codigoR.putE(returnE)
+                    codigoR.addExp(temp2, temp2, '1', '+')
+                    
+                return Return(temp1, TIPOS.STRUCT, True,None,self.tipoS)
     def getNodo(self):
         nodo1 = NodoAST("LLAMADA")
         nodoi = NodoAST("IDENTIFICADOR")

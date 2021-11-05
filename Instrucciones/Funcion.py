@@ -11,18 +11,22 @@ from TS.TCI import TCI
 
 class Funcion(Expresion):
     def __init__(self, nombre, tipo, parametros, instrucciones, fila, columna):
+        Expresion.__init__(self,tipo,fila,columna)
         self.nombre = nombre
         self.tipos=None
         self.tipo=None
+        self.tipoS=''
         if isinstance(tipo,list):
             self.tipo=TIPOS.ARREGLO
             self.tipos=tipo
         elif tipo is not None:
-            self.tipo=tipo
+            if isinstance(tipo,str):
+                self.tipo=TIPOS.STRUCT
+                self.tipoS=tipo
+            else:
+                self.tipo=tipo
         self.parametros = parametros
         self.instrucciones = instrucciones
-        self.fila = fila
-        self.columna = columna
     
     def interpretar(self, tree, table):
         table.setFuncion(self.nombre, self)
@@ -36,7 +40,11 @@ class Funcion(Expresion):
         nuevaTabla.tamano = 1
 
         for param in self.parametros:
-            simbolo = Simbolo(param.tipo, param.nombre, self.fila,self.columna,param.tipos,nuevaTabla.tamano,False, ((param.tipo == TIPOS.CADENA) | (param.tipo == TIPOS.STRUCT) | (param.tipo == TIPOS.ARREGLO)))
+            simbolo = None
+            if isinstance(param.tipo,str):
+                simbolo = Simbolo(TIPOS.STRUCT, param.nombre, self.fila,self.columna,param.tipos,nuevaTabla.tamano,False, ((param.tipo == TIPOS.CADENA) | (param.tipo == TIPOS.STRUCT) | (param.tipo == TIPOS.ARREGLO) | (isinstance(param.tipo,str))),param.tipo)
+            else:
+                simbolo = Simbolo(param.tipo, param.nombre, self.fila,self.columna,param.tipos,nuevaTabla.tamano,False, ((param.tipo == TIPOS.CADENA) | (param.tipo == TIPOS.STRUCT) | (param.tipo == TIPOS.ARREGLO)))
             porsi = nuevaTabla.actualizarTabla(simbolo)
         
         codigoR.addBeginFunc(self.nombre)

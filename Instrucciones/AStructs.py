@@ -1,6 +1,8 @@
+from Abstract.ReturnA import Return
 from TS.Simbolo import Simbolo
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 from Instrucciones.Return import ReturnI
 from Excepciones.Excepcion import Excepcion
@@ -16,22 +18,39 @@ class AStruct(Expresion):
         self.columna = columna
 
     def interpretar(self, tree, table):
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
         result = table.getVariable(self.nombre)
-        dicttmp2 = result.valor
-        if isinstance(dicttmp2, dict):
-            for i in self.atributos:
-                if i == self.atributos[-1]:
-                    return dicttmp2['atributos'][i]
-                if i in dicttmp2['atributos']:
-                    dicttmp2 = dicttmp2['atributos'][i]
-                else:
-                    return Excepcion("Semantico", i+" No es un atributo de "+self.nombre,self.fila,self.columna)
-        else:
-            return Excepcion("Semantico", "Variable sin atributos",self.fila,self.columna)
-        declara = Simbolo(TIPOS.STRUCT, self.nombre, self.fila, self.columna, self.atributos)
-        result = table.actualizarTabla(declara)
-        return None
-
+        temp1 = codigoR.addTemp()
+        temp2 = result.posicion
+        if(not result.globalV):
+            temp2 = codigoR.addTemp()
+            codigoR.addExp(temp2, 'P', result.posicion, "+")
+        codigoR.getStack(temp1,temp2)
+        dicttmp2 = table.getStruct(result.tipoS)
+        posicion = 0
+        tipo = None
+        retorno=None
+        tmp = dicttmp2['atributos'].keys()
+        tempAux = codigoR.addTemp()
+        retorno = codigoR.addTemp()
+        for i in self.atributos:
+            posicion=0
+            for att in tmp:
+                    if att == i:
+                        break
+                    posicion = posicion + 1
+            tipo = dicttmp2['atributos'][i]
+            codigoR.addExp(tempAux, temp1, posicion, '+')
+            codigoR.getHeap(retorno, tempAux)
+            if i == self.atributos[-1]:
+                return Return(retorno, tipo, True)
+            else:
+                dicttmp2 = table.getStruct(tipo)
+                tmp = dicttmp2['atributos'].keys()
+                codigoR.addExp(temp1, retorno, '', '')
+                
+        
     def getNodo(self):
         nodo1 = NodoAST("ACCEDER STRUCT")
         nodoi = NodoAST("IDENTIFICADOR")
