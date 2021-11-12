@@ -1,7 +1,9 @@
 from copy import copy
+from Abstract.ReturnA import Return
 from TS.Simbolo import Simbolo
 from Abstract.instruccion import Expresion
 from Abstract.NodoAST import NodoAST
+from TS.TCI import TCI
 from TS.Tipo import TIPOS
 from Instrucciones.Return import ReturnI
 from Excepciones.Excepcion import Excepcion
@@ -18,22 +20,38 @@ class MStruct(Expresion):
         self.columna = columna
 
     def interpretar(self, tree, table):
+        codigoAux = TCI()
+        codigoR = codigoAux.getInstance()
         nuevo = self.expresion.interpretar(tree,table)
         result = table.getVariable(self.nombre)
-        if isinstance(result.valor, dict):
-            dicttmp = result.valor
+        if result.tipo== TIPOS.STRUCT:
+            temp1 = codigoR.addTemp()
+            temp2 = codigoR.addTemp()
+            codigoR.addExp(temp2, 'P', result.posicion, "+")
+            codigoR.getStack(temp1,temp2)
+            dicttmp = table.getStruct(result.tipoS)
+            posicion = 0
+            tipo = None
+            retorno=None
+            tmp = dicttmp['atributos'].keys()
+            tempAux = codigoR.addTemp()
+            retorno = codigoR.addTemp()
             if dicttmp['mutable']:
                 for i in self.atributos:
                     if dicttmp['mutable']:
+                        for att in tmp:
+                            if att == i:
+                                break
+                            posicion = posicion + 1
+                        tipo = dicttmp['atributos'][i]
+                        codigoR.addExp(tempAux, temp1, posicion, '+')
                         if i == self.atributos[-1]:
-                            if i in dicttmp['atributos']:
-                                dicttmp['atributos'][i]=nuevo
-                            else:
-                                return Excepcion("Semantico", i+" No es un atributo de "+self.nombre,self.fila,self.columna)
-                        elif i in dicttmp['atributos']:
-                            dicttmp = dicttmp['atributos'][i]
+                            codigoR.setHeap(tempAux,nuevo.valor)
                         else:
-                            return Excepcion("Semantico", i+" No es un atributo de "+self.nombre,self.fila,self.columna)
+                            codigoR.getHeap(retorno, tempAux)
+                            dicttmp = table.getStruct(tipo)
+                            tmp = dicttmp['atributos'].keys()
+                            codigoR.addExp(temp1, retorno, '', '')
                     else:
                         return Excepcion("Semantico", i+" Struct Inmutable",self.fila,self.columna)
             else:

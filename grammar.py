@@ -55,7 +55,7 @@ reservadas = {
     'length'    : 'RLENGTH',
     'struct'    : 'RSTRUCT',
     'mutable'   : 'RMUTABLE',
-    'nothing'   : 'RNOTHING',
+    'Nothing'   : 'RNOTHING',
     'global'   : 'RGLOBAL',
 }
 

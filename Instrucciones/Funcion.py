@@ -48,8 +48,10 @@ class Funcion(Expresion):
             porsi = nuevaTabla.actualizarTabla(simbolo)
         
         codigoR.addBeginFunc(self.nombre)
-
+        retorno = False
         for instr in self.instrucciones:
+            if isinstance(instr,ReturnI):
+                retorno=True
             instr.interpretar(tree,nuevaTabla)
         
         codigoR.putE(returnE)

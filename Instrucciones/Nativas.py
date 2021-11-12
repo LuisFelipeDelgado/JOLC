@@ -25,7 +25,7 @@ class FNativas(Expresion):
             res_left = self.operacion1.interpretar(tree, table)
             if isinstance(res_left, Excepcion):
                 return res_left
-            if not isinstance(self.operacion2,TIPO):
+            if not isinstance(self.operacion2,TIPOS):
                 res_right = self.operacion2.interpretar(tree, table)
                 if isinstance(res_right, Excepcion):
                     return res_right
@@ -37,7 +37,7 @@ class FNativas(Expresion):
         codigoR = codigoAux.getInstance()
         if(self.funcion==FuncionNativa.PARSE):
             if(res_left.tipo==TIPOS.CADENA):
-                if(self.operacion2.tipos==TIPOS.ENTERO):
+                if(self.operacion2==TIPOS.ENTERO):
                     tempP=codigoR.addTemp()
                     tempP2=codigoR.addTemp()
                     tempP3=codigoR.addTemp()
@@ -89,7 +89,7 @@ class FNativas(Expresion):
                     codigoR.GoTo(compE)
                     codigoR.putE(salidaE)
                     return Return(tempP5,TIPOS.ENTERO,True)
-                elif(self.operacion2.tipos==TIPOS.DECIMAL):
+                elif(self.operacion2==TIPOS.DECIMAL):
                     tempP=codigoR.addTemp()
                     tempP2=codigoR.addTemp()
                     tempP3=codigoR.addTemp()
@@ -148,7 +148,7 @@ class FNativas(Expresion):
                 return Excepcion("Semantico", "Tipo erroneo para parse",self.fila,self.columna)
         elif(self.funcion==FuncionNativa.TRUNC):
             if(res_left.tipo==TIPOS.DECIMAL):
-                if (self.operacion2.tipos==TIPOS.ENTERO):
+                if (self.operacion2==TIPOS.ENTERO):
                     tempP = codigoR.addTemp()
                     codigoR.addExp(tempP,res_left.valor,'','')
                     tempP2 = codigoR.addTemp()
@@ -190,26 +190,7 @@ class FNativas(Expresion):
         return Excepcion("Semantico", "Operador desconocido",self.fila,self.columna)
 
     def getNodo(self):
-        nodo = NodoAST("NATIVAS")
-        if self.operacion2 != None:
-            op = self.returnTipo()
-            nodo.agregarHijo(op)
-            nodo.agregarHijo("(")
-            nodo.agregarHijoNodo(self.operacion1.getNodo())
-            nodo.agregarHijo(",")
-            if not isinstance(self.operacion2,TIPO):
-                nodo.agregarHijoNodo(self.operacion2.getNodo())
-            else:
-                nodo.agregarHijo(self.operacion2.tipos.name)
-            nodo.agregarHijo(")")
-        else:
-            op = self.returnTipo()
-            nodo.agregarHijo(op)
-            nodo.agregarHijo("(")
-            nodo.agregarHijoNodo(self.operacion1.getNodo())
-            nodo.agregarHijo(")")
-        
-        return nodo
+        pass
 
     def returnTipo(self):
         ret=""

@@ -47,6 +47,10 @@ class Relacional(Expresion):
                 self.checkLabels()
                 codigoR.addIf(res_left.valor, res_right.valor, self.returnTipo(), self.ev)
                 codigoR.GoTo(self.ef)
+            elif (res_left.tipo == TIPOS.NULO or res_right.tipo == TIPOS.NULO):
+                self.checkLabels()
+                codigoR.addIf(res_left.valor, res_right.valor, self.returnTipo(), self.ev)
+                codigoR.GoTo(self.ef)
             elif res_left.tipo == TIPOS.CADENA and res_right.tipo == TIPOS.CADENA:
                 if self.operador==OperadorRelacional.IGUALIGUAL:
                     codigoR.fcompareString()

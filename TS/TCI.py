@@ -49,7 +49,7 @@ class TCI:
                 if temp != (len(self.temps) - 1):
                     ret += ", "
             ret += " float64\n"
-        ret += "var P, H float64;\nvar stack [30101999]float64;\nvar heap [30101999]float64;\n\n"
+        ret += "var P, H float64;\nvar stack [10000000]float64;\nvar heap [10000000]float64;\n\n"
         return ret
 
     def getCode(self):

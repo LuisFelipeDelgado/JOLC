@@ -27,7 +27,7 @@ class Llamada(Expresion):
             tamano = table.tamano
             for param in self.parametros:
                 if table.funcion and isinstance(param,Llamada):
-                    codigoR.addComment("Guardar Temp----------------------------------------")
+                    codigoR.addComment("GUARDAR Temp----------------------------------------")
                     tempP1 = codigoR.temps[-1]
                     tempP = codigoR.addTemp()
                     codigoR.addExp(tempP,'P',table.tamano,'+')

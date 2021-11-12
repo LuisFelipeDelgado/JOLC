@@ -67,6 +67,8 @@ class Primitivo(Expresion):
                 codigoR.setHeap(retTemp2, char1.valor) 
                 codigoR.addExp(retTemp2, retTemp2, '1', '+')
             return Return(retTemp, TIPOS.ARREGLO, True,tiposA)
+        elif self.tipo == TIPOS.NULO:
+            return Return('-1',self.tipo,False)
 
     def getNodo(self):
         nodo1 = NodoAST("PRIMITIVO")

@@ -23,15 +23,6 @@ class Asignacion(Expresion):
         isHeap = False
         if (value.tipo == TIPOS.CADENA) | (value.tipo==TIPOS.STRUCT) | (value.tipo==TIPOS.ARREGLO):
             isHeap=True
-        if(self.tipo==None):
-            if isinstance(value, Excepcion):
-                return value
-        else:
-            value = self.expresion.interpretar(tree, table)
-            if isinstance(value, Excepcion):
-                return value
-            if(value.tipo!=self.tipo):
-                return Excepcion("Semantico", "Tipo erroneo para declaracion",self.fila,self.columna)
         if value.tipo==TIPOS.ARREGLO:
             simbolo = Simbolo(value.tipo, self.identificador, self.fila, self.columna, value.aux,table.tamano,table.anterior==None,isHeap)
         else:

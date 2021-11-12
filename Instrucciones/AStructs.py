@@ -44,7 +44,10 @@ class AStruct(Expresion):
             codigoR.addExp(tempAux, temp1, posicion, '+')
             codigoR.getHeap(retorno, tempAux)
             if i == self.atributos[-1]:
-                return Return(retorno, tipo, True)
+                if isinstance(tipo,list):
+                    return Return(retorno, TIPOS.ARREGLO, True,tipo)
+                else:
+                    return Return(retorno, tipo, True)
             else:
                 dicttmp2 = table.getStruct(tipo)
                 tmp = dicttmp2['atributos'].keys()
