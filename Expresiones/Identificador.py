@@ -8,6 +8,7 @@ from TS.Tipo import TIPOS
 
 class Identificador(Expresion):
     def __init__(self, identificador, fila, columna):
+        Expresion.__init__(self,None,fila,columna)
         self.identificador = identificador
         self.fila = fila
         self.columna = columna
