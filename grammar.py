@@ -153,12 +153,12 @@ def t_CADENA(t):
     return t
 
 def t_COMENTARIO_MULTILINEA(t):
-    r'[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]*'
+    r'\#=(.|\n)=?=\#'
     t.lexer.lineno += t.value.count('\n')
 
 # Comentario simple // ...
 def t_COMENTARIO_SIMPLE(t):
-    r"//.*"
+    r'\#.*\n'
     t.lexer.lineno += 1
 
 # Caracteres ignorados
