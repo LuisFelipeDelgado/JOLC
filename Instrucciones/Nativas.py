@@ -187,6 +187,55 @@ class FNativas(Expresion):
                 return Return(tempP,TIPOS.ENTERO,True)
             else:
                 return Excepcion("Semantico", "Tipo erroneo para length",self.fila,self.columna)
+        elif(self.funcion==FuncionNativa.UPPERCASE):
+            if(res_uni.tipo==TIPOS.CADENA):
+                    tempP=codigoR.addTemp()
+                    tempP2=codigoR.addTemp()
+                    codigoR.addExp(tempP,res_uni.valor,'','')
+                    compE=codigoR.newE()
+                    avanE=codigoR.newE()
+                    cambioE=codigoR.newE()
+                    salidaE=codigoR.newE()
+                    codigoR.putE(compE)
+                    codigoR.getHeap(tempP2,tempP)
+                    codigoR.addIf(tempP2,'-1','!=',cambioE)
+                    codigoR.GoTo(salidaE)
+                    codigoR.putE(cambioE)
+                    codigoR.addIf(tempP2,'96','<',avanE)
+                    codigoR.addExp(tempP2,tempP2,'32','-')
+                    codigoR.setHeap(tempP,tempP2)
+                    codigoR.putE(avanE)
+                    codigoR.addExp(tempP,tempP,'1','+')
+                    codigoR.GoTo(compE)
+                    codigoR.putE(salidaE)
+                    return Return(res_uni.valor,TIPOS.CADENA,True)
+            else:
+                return Excepcion("Semantico", "Tipo erroneo para uppercase",self.fila,self.columna)
+        elif(self.funcion==FuncionNativa.LOWERCASE):
+            if(res_uni.tipo==TIPOS.CADENA):
+                    tempP=codigoR.addTemp()
+                    tempP2=codigoR.addTemp()
+                    codigoR.addExp(tempP,res_uni.valor,'','')
+                    compE=codigoR.newE()
+                    avanE=codigoR.newE()
+                    cambioE=codigoR.newE()
+                    salidaE=codigoR.newE()
+                    codigoR.putE(compE)
+                    codigoR.getHeap(tempP2,tempP)
+                    codigoR.addIf(tempP2,'-1','!=',cambioE)
+                    codigoR.GoTo(salidaE)
+                    codigoR.putE(cambioE)
+                    codigoR.addIf(tempP2,'96','>',avanE)
+                    codigoR.addExp(tempP2,tempP2,'32','+')
+                    codigoR.setHeap(tempP,tempP2)
+                    codigoR.putE(avanE)
+                    codigoR.addExp(tempP,tempP,'1','+')
+                    codigoR.GoTo(compE)
+                    codigoR.putE(salidaE)
+                    return Return(res_uni.valor,TIPOS.CADENA,True)
+            else:
+                return Excepcion("Semantico", "Tipo erroneo para uppercase",self.fila,self.columna)
+        
         return Excepcion("Semantico", "Operador desconocido",self.fila,self.columna)
 
     def getNodo(self):
@@ -204,6 +253,10 @@ class FNativas(Expresion):
             ret="STRING"
         elif self.funcion==FuncionNativa.LENGTH:
             ret="LENGTH"
+        elif self.funcion==FuncionNativa.LOWERCASE:
+            ret="LOWERCASE"
+        elif self.funcion==FuncionNativa.UPPERCASE:
+            ret="UPPERCASE"
         return ret
     
 class FuncionNativa(Enum):
@@ -212,3 +265,5 @@ class FuncionNativa(Enum):
     FLOAT = 3
     STRING = 4
     LENGTH = 5
+    LOWERCASE = 6
+    UPPERCASE = 7

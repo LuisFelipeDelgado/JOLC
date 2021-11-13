@@ -28,21 +28,44 @@ class AArreglos(Expresion):
             temp1 = None
             listtmp = None
             if isinstance(result.aux, list):
+                salidaE = codigoR.newE()
                 if len(result.aux) != len(self.posiciones):
                     listtmp = copy.deepcopy(result.aux)
                     for i in range(len(self.posiciones)):
                         listtmp.pop(i)
                 for i in self.posiciones:
+                    errorE = codigoR.newE()
+                    continuarE = codigoR.newE()
                     iC = i.interpretar(tree,table)
                     temp1 = codigoR.addTemp()
+                    temp3 = codigoR.addTemp()
                     if i == self.posiciones[0]:
+                        codigoR.getHeap(temp3,result.valor)
+                        codigoR.addIf(iC.valor,temp3,'>',errorE)
                         codigoR.addExp(temp1, result.valor,iC.valor, "+")
                         temp2 = codigoR.addTemp()
                         codigoR.getHeap(temp2,temp1)
+                        codigoR.GoTo(continuarE)
+                        codigoR.putE(errorE)
+                        codigoR.printBoundsE()
+                        codigoR.callFun('BoundsError')
+                        codigoR.addExp(temp2, '0','', '')
+                        codigoR.GoTo(salidaE)
+                        codigoR.putE(continuarE)
                     else:
+                        codigoR.getHeap(temp3,temp2)
+                        codigoR.addIf(iC.valor,temp3,'>',errorE)
                         codigoR.addExp(temp1, temp2,iC.valor, "+")
                         temp2 = codigoR.addTemp()
                         codigoR.getHeap(temp2,temp1)
+                        codigoR.GoTo(continuarE)
+                        codigoR.putE(errorE)
+                        codigoR.printBoundsE()
+                        codigoR.callFun('BoundsError')
+                        codigoR.addExp(temp2, '0','', '')
+                        codigoR.GoTo(salidaE)
+                        codigoR.putE(continuarE)
+                codigoR.putE(salidaE)
                 return Return(temp2,(result.aux[len(self.posiciones)-1]),True,listtmp)
         else:
             return Excepcion("Semantico", "Variable no es un Arreglo", self.fila, self.columna)

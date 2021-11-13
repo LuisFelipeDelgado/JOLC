@@ -121,7 +121,7 @@ class Arbol:
                                 '<TD ><FONT FACE="arial">' + str(value.columna) + '</FONT></TD></TR>\n')
                 else:
                     listtmp3.append('<TR><TD><FONT FACE="arial">' + n + '</FONT></TD>' +
-                                '<TD ><FONT FACE="arial">' + value.valor.tipo.name + '</FONT></TD>' +
+                                '<TD ><FONT FACE="arial">' + value.tipo.name + '</FONT></TD>' +
                                 '<TD ><FONT FACE="arial">' + m.getEntorno() + '</FONT></TD>' +
                                 '<TD ><FONT FACE="arial">' + str(value.fila) + '</FONT></TD>' +
                                 '<TD ><FONT FACE="arial">' + str(value.columna) + '</FONT></TD></TR>\n')

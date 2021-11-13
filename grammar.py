@@ -53,6 +53,8 @@ reservadas = {
     'float'     : 'RFLOAT2',
     'string'    : 'RSTRING2',
     'length'    : 'RLENGTH',
+    'lowercase' : 'RLOWERCASE',
+    'uppercase' : 'RUPPERCASE',
     'struct'    : 'RSTRUCT',
     'mutable'   : 'RMUTABLE',
     'Nothing'   : 'RNOTHING',
@@ -609,6 +611,8 @@ def p_funcion_nativa(t):
             | RFLOAT2 PARA expresion PARC
             | RSTRING2 PARA expresion PARC
             | RLENGTH PARA expresion PARC
+            | RLOWERCASE PARA expresion PARC
+            | RUPPERCASE PARA expresion PARC
     '''
     if t[1] == 'parse':
         t[0] = FNativas(FuncionNativa.PARSE, t[5], t.lineno(2), find_column(input, t.slice[2]), t[3])
@@ -620,6 +624,10 @@ def p_funcion_nativa(t):
         t[0] = FNativas(FuncionNativa.STRING, t[3], t.lineno(2), find_column(input, t.slice[2]))
     elif t[1] == 'length':
         t[0] = FNativas(FuncionNativa.LENGTH, t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[1] == 'lowercase':
+        t[0] = FNativas(FuncionNativa.LOWERCASE, t[3], t.lineno(2), find_column(input, t.slice[2]))
+    elif t[1] == 'uppercase':
+        t[0] = FNativas(FuncionNativa.UPPERCASE, t[3], t.lineno(2), find_column(input, t.slice[2]))
 
 #///////////////////////////////////////ARREGLOS//////////////////////////////////////////////////
 

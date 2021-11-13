@@ -19,6 +19,7 @@ class TCI:
         self.Pow = False
         self.compareString = False
         self.mathE = False
+        self.BoundsE = False
 
     #------------------------------------------------REINICIO-----------------------------------------------
             
@@ -393,6 +394,30 @@ class TCI:
         self.addPrint('c', '97')
         self.addPrint('c', '116')
         self.addPrint('c', '104')
+        self.addPrint('c', '69')
+        self.addPrint('c', '114')
+        self.addPrint('c', '114')
+        self.addPrint('c', '111')
+        self.addPrint('c', '114')
+        self.addPrint("c", 10)
+        self.addEndFunc()
+        self.inNatives = False
+        return
+
+        
+    def printBoundsE(self):
+        if(self.BoundsE):
+            return
+        self.BoundsE = True
+        self.inNatives = True
+
+        self.addBeginFunc('BoundsError')
+        self.addPrint('c', '66')
+        self.addPrint('c', '111')
+        self.addPrint('c', '117')
+        self.addPrint('c', '110')
+        self.addPrint('c', '100')
+        self.addPrint('c', '115')
         self.addPrint('c', '69')
         self.addPrint('c', '114')
         self.addPrint('c', '114')

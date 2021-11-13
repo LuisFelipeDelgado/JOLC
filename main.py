@@ -38,15 +38,6 @@ def output():
 def reports():
     return render_template('reports.html')
 
-@app.route('/reports/arbol')
-def arbol():
-    raiz = result.raiz
-    dot = result.getDot(raiz)
-    dig = graphviz.Source(dot)
-    chart_output = dig.pipe(format='svg')
-    chart_output = base64.b64encode(chart_output).decode('utf-8')
-    return render_template('reports.html', chart=chart_output)
-
 @app.route('/reports/simbols')
 def simbols():
     dot = result.tablaS()
@@ -54,14 +45,6 @@ def simbols():
     chart_output = dig.pipe(format='svg')
     chart_output = base64.b64encode(chart_output).decode('utf-8')
     return render_template('reports.html', chart2=chart_output)
-
-@app.route('/reports/errors')
-def errors():
-    dot = result.tablaSE()
-    dig = graphviz.Source(dot)
-    chart_output = dig.pipe(format='svg')
-    chart_output = base64.b64encode(chart_output).decode('utf-8')
-    return render_template('reports.html', chart3=chart_output)
 
 if __name__ == "__main__":
     app.run(debug=True)#para que se actualice al detectar cambios
